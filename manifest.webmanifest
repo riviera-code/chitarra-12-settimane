@@ -1,0 +1,16 @@
+{
+  "name": "Chitarra in 12 settimane",
+  "short_name": "Chitarra 12",
+  "description": "Piano di 12 settimane per imparare ad accompagnare canzoni con la chitarra.",
+  "lang": "it",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "background_color": "#0f1211",
+  "theme_color": "#0f1211",
+  "icons": [
+    {"src": "icon.svg", "sizes": "any", "type": "image/svg+xml"},
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}
+  ]
+}

@@ -1,0 +1,992 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Chitarra in 12 settimane</title>
+<meta name="description" content="Piano di 12 settimane per imparare ad accompagnare canzoni con la chitarra: accordi, ritmica, metronomo e accordatore.">
+<meta name="theme-color" content="#0f1211">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Chitarra 12">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="icon.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="icon-180.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: sticky header + tab bar, one panel at a time; cards on a cool neutral ground, brass accent like wound strings */
+:root{
+  --bg:#eceeed; --surface:#ffffff; --surface2:#e2e7e5; --line:#cbd2cf;
+  --fg:#151a19; --muted:#56635f; --accent:#94640e; --accent-fg:#ffffff; --accent-soft:#f1e6cf;
+  --ok:#2b7a4b; --bad:#b3382c;
+  --f-display:"Bricolage Grotesque","Helvetica Neue",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#0f1211; --surface:#171c1a; --surface2:#212724; --line:#2f3935;
+  --fg:#e8ece9; --muted:#98a39e; --accent:#e0b04f; --accent-fg:#1b1405; --accent-soft:#2c2412;
+  --ok:#5fbf86; --bad:#e46a5c; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0f1211; --surface:#171c1a; --surface2:#212724; --line:#2f3935;
+  --fg:#e8ece9; --muted:#98a39e; --accent:#e0b04f; --accent-fg:#1b1405; --accent-soft:#2c2412;
+  --ok:#5fbf86; --bad:#e46a5c; color-scheme:dark}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--fg);font:15px/1.5 var(--f-body);padding-block:0 48px;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);background:var(--bg);z-index:30}
+.wrap{max-width:980px;margin:0 auto}
+h1,h2,h3{font-family:var(--f-display);margin:0;line-height:1.15;text-wrap:balance}
+h1{font-size:26px;letter-spacing:-.01em}
+h2{font-size:20px}
+h3{font-size:16px}
+p{margin:0}
+button{font:inherit;color:inherit;cursor:pointer}
+button:disabled{opacity:.45;cursor:default}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--bg);padding-top:14px}
+.head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap}
+.head p{color:var(--muted);font-size:13px}
+.overall{min-width:150px;flex:0 1 190px}
+.overall span{font:500 12px var(--f-mono);color:var(--muted)}
+.bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin-top:4px}
+.bar i{display:block;height:100%;width:0;background:var(--accent);transition:width .3s}
+nav{display:flex;gap:4px;margin-top:12px;overflow-x:auto;border-bottom:1px solid var(--line);scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:1 0 auto;background:none;border:0;border-bottom:3px solid transparent;padding:10px 12px;font-weight:500;color:var(--muted);white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--fg);border-bottom-color:var(--accent)}
+.panel{padding-top:18px}
+.stack{display:flex;flex-direction:column;gap:14px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:16px;min-width:0}
+.muted{color:var(--muted)}
+.small{font-size:13px}
+.mono{font-family:var(--f-mono);font-variant-numeric:tabular-nums}
+.btn{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:8px 14px;font-weight:500}
+.btn:hover:not(:disabled){border-color:var(--accent)}
+.btn.pri{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.btn.sm{padding:5px 10px;font-size:13px}
+.chip{display:inline-block;background:var(--surface2);border:1px solid var(--line);border-radius:999px;padding:3px 10px;font-size:13px}
+.chip.on{background:var(--accent);color:var(--accent-fg);border-color:var(--accent)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.lead{font-size:16px}
+/* percorso */
+.week{padding:0}
+.week>button.wh{width:100%;text-align:left;background:none;border:0;padding:14px 16px;display:flex;gap:12px;align-items:center}
+.wnum{font:700 22px var(--f-display);color:var(--accent);width:34px;flex:none}
+.wt{flex:1;min-width:0}
+.wt b{font-family:var(--f-display);font-size:16px;display:block}
+.wt span{color:var(--muted);font-size:13px}
+.wprog{font:500 12px var(--f-mono);color:var(--muted);flex:none}
+.week.done .wnum{color:var(--ok)}
+.wbody{padding:16px;display:flex;flex-direction:column;gap:16px;border-top:1px solid var(--line)}
+.wbody h4{margin:0 0 6px;font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.diagrams{display:flex;gap:10px;flex-wrap:wrap}
+.mini{width:84px;text-align:center;display:flex;flex-direction:column;align-items:center}
+.mini svg{width:84px;height:auto}
+.mini b{font-family:var(--f-display)}
+ul.plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.routine li{display:flex;gap:10px}
+.routine .min{font:500 13px var(--f-mono);color:var(--accent);flex:0 0 46px}
+.check{display:flex;gap:10px;align-items:flex-start;cursor:pointer}
+.check input{margin-top:4px;width:18px;height:18px;accent-color:var(--accent);flex:none}
+.days{display:flex;gap:6px;flex-wrap:wrap}
+.days button{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:var(--surface);font:500 12px var(--f-mono)}
+.days button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-fg)}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,240px),1fr));gap:16px}
+/* accordi */
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,270px),1fr));gap:12px}
+.chord{display:flex;gap:12px;align-items:flex-start}
+.chord svg{width:110px;height:auto;flex:none}
+.chord>div{min-width:0}
+.chord h3{font-size:22px}
+.it{color:var(--muted);font-size:13px;margin-bottom:6px}
+.tip{font-size:13px;margin-bottom:8px}
+.diag .fr{stroke:var(--line)} .diag .st{stroke:var(--muted)} .diag .nut{stroke:var(--fg)}
+.diag .dot{fill:var(--accent)} .diag text{fill:var(--accent-fg);font:700 10px var(--f-body);text-anchor:middle}
+.diag .mk{fill:none;stroke:var(--fg);stroke-width:1.5} .diag .xx{stroke:var(--fg);stroke-width:1.8}
+/* ritmica */
+.pat{display:grid;gap:3px;margin:8px 0}
+.pat div{text-align:center;background:var(--surface2);border-radius:6px;padding:4px 0;font:500 15px var(--f-mono);min-width:0}
+.pat div.lbl{background:none;font-size:11px;color:var(--muted);padding:0}
+.pat div.beat{background:var(--accent-soft)}
+.pat div.act{background:var(--accent);color:var(--accent-fg)}
+.timer{font:700 64px var(--f-display);font-variant-numeric:tabular-nums;line-height:1}
+select{font:inherit;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:8px;padding:8px 10px;max-width:100%}
+.numin{width:84px;text-align:center;font:700 28px var(--f-display);padding:6px;border:1px solid var(--line);border-radius:8px;background:var(--surface);color:var(--fg)}
+/* metronomo */
+.bpmbox{display:flex;align-items:center;justify-content:center;gap:14px}
+.bpmnum{font:700 72px var(--f-display);font-variant-numeric:tabular-nums;line-height:1;min-width:2.2ch;text-align:center}
+.round{width:46px;height:46px;border-radius:50%;font-size:24px;line-height:1;padding:0}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.dots{display:flex;gap:10px;justify-content:center;margin:14px 0}
+.dots i{width:20px;height:20px;border-radius:50%;background:var(--surface2);border:1px solid var(--line)}
+.dots i.on{background:var(--accent);border-color:var(--accent)}
+.big{font:700 clamp(34px,9vw,54px)/1 var(--f-display);overflow-wrap:anywhere}
+.go{width:100%;padding:14px;font-size:18px;font-weight:600}
+.trbox{gap:20px;flex-wrap:nowrap}
+.trbox>div:last-child{min-width:0}
+.trsvg{width:110px;flex:none}
+.nextwrap{display:inline-block;padding:4px 10px;margin-left:-10px;border-radius:8px;margin-top:8px}
+.trbox.soon .nextwrap{background:var(--accent);color:var(--accent-fg)}
+/* sessione */
+.steps{display:flex;gap:4px}
+.steps i{flex:1;height:6px;border-radius:3px;background:var(--surface2)}
+.steps i.on{background:var(--accent)}
+.steps i.cur{background:var(--accent);opacity:.45}
+.stime{font:700 60px var(--f-display);font-variant-numeric:tabular-nums;line-height:1}
+/* tuner */
+.strings{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:10px}
+.sbtn{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:left}
+.sbtn b{display:block;font:700 26px var(--f-display)}
+.sbtn span{font:500 12px var(--f-mono);color:var(--muted)}
+.sbtn[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.meter{position:relative;height:44px;background:var(--surface2);border-radius:8px;margin:14px 0}
+.meter::before{content:"";position:absolute;left:50%;top:6px;bottom:6px;width:2px;background:var(--ok)}
+.meter i{position:absolute;top:4px;bottom:4px;width:6px;margin-left:-3px;border-radius:3px;background:var(--accent);left:50%;transition:left .08s}
+.msg{padding:10px 12px;border-radius:8px;background:var(--surface2);font-size:14px}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+@media (max-width:520px){.bpmnum{font-size:60px}.chord svg{width:96px}.trsvg{width:90px}.stime{font-size:50px}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<div class="top">
+  <div class="head">
+    <div><h1>Chitarra in 12 settimane</h1><p>Per la tua Yamaha FS400: accordi, ritmica, canzoni</p></div>
+    <div class="overall"><span id="ovTxt">0% completato</span><div class="bar"><i id="ovBar"></i></div></div>
+  </div>
+  <div class="row" id="notaSel" role="group" aria-label="Notazione delle note" style="margin-top:10px"></div>
+  <p class="msg small" id="saveWarn" style="margin-top:8px" hidden>I progressi non si possono salvare in questa vista: restano solo finché la pagina è aperta.</p>
+  <nav id="tabs" role="tablist">
+    <button role="tab" data-tab="percorso">Percorso</button>
+    <button role="tab" data-tab="accordi">Accordi</button>
+    <button role="tab" data-tab="esercizi">Esercizi</button>
+    <button role="tab" data-tab="metronomo">Metronomo</button>
+    <button role="tab" data-tab="accordatore">Accordatore</button>
+  </nav>
+</div>
+
+<section class="panel" id="p-percorso"></section>
+<section class="panel" id="p-sessione" hidden></section>
+
+<section class="panel" id="p-accordi" hidden>
+  <div class="stack">
+    <div class="card">
+      <h2>Come leggere un diagramma</h2>
+      <p class="small muted" style="margin-top:6px">Le linee verticali sono le corde: a sinistra la 6ª (Mi grave, la più spessa), a destra la 1ª (Mi cantino). Le linee orizzontali sono i tasti. Un pallino è un dito e il numero dice quale: 1 indice, 2 medio, 3 anulare, 4 mignolo. La O sopra la corda è corda libera, la X è una corda da non suonare. Premi sempre con la punta del dito, vicino al tasto e non sopra.</p>
+    </div>
+    <div class="row" id="chordFilter"></div>
+    <div class="grid" id="chordGrid"></div>
+  </div>
+</section>
+
+<section class="panel" id="p-esercizi" hidden>
+  <div class="stack">
+    <div class="card">
+      <h2>Cambi di accordo in un minuto</h2>
+      <p class="small muted" style="margin:6px 0 12px">Scegli una coppia e premi Inizia. Dopo tre segnali parte il minuto: suona i cambi e contali a voce. Un segnale finale ti dice di fermarti, poi inserisci quanti cambi puliti hai fatto.</p>
+      <div class="row" style="margin-bottom:12px"><select id="oneSel" aria-label="Coppia di accordi"></select><span class="small muted" id="oneTarget"></span></div>
+      <div class="cols">
+        <div class="row" id="oneDiag" style="justify-content:center;gap:16px"></div>
+        <div style="text-align:center" class="stack">
+          <div class="timer" id="oneTime">60</div>
+          <p class="small muted" id="oneInfo">Pronto</p>
+          <button class="btn pri go" id="oneStart">Inizia</button>
+          <div id="oneEntry" class="stack" hidden>
+            <label for="oneIn"><b>Quanti cambi puliti hai contato?</b></label>
+            <div class="row" style="justify-content:center">
+              <button class="btn round" data-act="onein" data-d="-1" aria-label="Meno uno">−</button>
+              <input id="oneIn" class="numin" type="number" min="0" max="99" value="0" inputmode="numeric">
+              <button class="btn round" data-act="onein" data-d="1" aria-label="Più uno">+</button>
+            </div>
+            <div class="row" style="justify-content:center"><button class="btn pri" id="oneSave">Salva il risultato</button><button class="btn" id="oneDiscard">Scarta</button></div>
+          </div>
+          <p class="small muted" id="oneHist"></p>
+        </div>
+      </div>
+    </div>
+    <div class="card"><h2>Ritmica</h2>
+      <p class="small muted" style="margin:6px 0 4px">↓ colpo in giù, ↑ colpo in su, ● nota di basso, · la mano continua a muoversi senza toccare le corde. Il braccio non si ferma mai: i colpi mancati sono "fantasma". Impara ogni pattern a gradini: contalo a voce, poi fallo sulle corde mute, poi su un accordo, poi cambiando tra due accordi.</p>
+      <div class="stack" id="patList" style="margin-top:12px"></div>
+    </div>
+    <div><h2 style="margin:6px 0 12px">Esercizi da ripetere</h2><div class="grid" id="exLib"></div></div>
+  </div>
+</section>
+
+<section class="panel" id="p-metronomo" hidden>
+  <div class="stack">
+    <div class="card">
+      <div class="bpmbox">
+        <button class="btn round" id="bpmDn" aria-label="Meno 1 bpm">−</button>
+        <div style="text-align:center"><div class="bpmnum" id="bpmNum">80</div><div class="mono muted small">BPM</div></div>
+        <button class="btn round" id="bpmUp" aria-label="Più 1 bpm">+</button>
+      </div>
+      <input type="range" id="bpmRange" min="40" max="200" value="80" aria-label="Tempo in BPM" style="margin-top:12px">
+      <div id="beatDots"></div>
+      <div class="row" style="justify-content:center;margin-bottom:12px">
+        <button class="btn sm" id="tap">Tap tempo</button>
+        <label class="check small"><input type="checkbox" id="optSub"> Click sugli ottavi</label>
+        <label class="check small"><input type="checkbox" id="optAcc" checked> Accento sull'1</label>
+        <label class="check small"><input type="checkbox" id="optSwing"> Swing</label>
+      </div>
+      <button class="btn pri go" id="mStart">Avvia</button>
+    </div>
+    <div class="card">
+      <h2>Pattern di ritmica</h2>
+      <div class="row" id="patChips" style="margin:10px 0"></div>
+      <div id="mPat"></div>
+      <p class="small muted" id="patDesc"></p>
+      <div class="row" style="margin-top:10px">
+        <label class="check small"><input type="checkbox" id="optPlay" checked> Suona il pattern con la chitarra</label>
+        <span class="row" id="patChordRow"><label class="small" for="patChord">Accordo:</label><select id="patChord"></select></span>
+        <span class="row"><label class="small" for="capoSel">Capotasto:</label><select id="capoSel"></select></span>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Cambi di accordo a tempo</h2>
+      <p class="small muted" style="margin:6px 0 12px">L'accordo cambia da solo. Quando "Prossimo" si illumina sei sull'ultimo battito prima del cambio: suona l'ultimo colpo e prepara le dita. All'inizio puoi saltare l'ultimo colpo in su per avere più tempo.</p>
+      <div class="row" style="margin-bottom:12px">
+        <label class="check small"><input type="checkbox" id="trOn"> Attiva</label>
+        <select id="trProg" aria-label="Progressione"></select>
+        <select id="trBpc" aria-label="Battiti per accordo">
+          <option value="2">Cambio ogni 2 battiti</option><option value="3">Cambio ogni 3 battiti</option><option value="4">Cambio ogni 4 battiti</option><option value="6">Cambio ogni 6 battiti</option><option value="8">Cambio ogni 8 battiti</option>
+        </select>
+      </div>
+      <div class="row trbox" hidden><div class="trsvg"></div><div><div class="big trc">–</div><p class="nextwrap">Prossimo: <b class="trn">–</b></p><p class="small muted trbar"></p></div></div>
+    </div>
+  </div>
+</section>
+
+<section class="panel" id="p-accordatore" hidden>
+  <div class="stack">
+    <div class="card">
+      <h2>Accordatura standard</h2>
+      <p class="small muted" style="margin:6px 0 12px">Tocca una corda per sentire la nota di riferimento, poi gira il meccanico finché la tua corda suona uguale. Parti dalla 6ª e arriva alla 1ª. Porta sempre la corda a intonazione salendo da sotto: se hai superato la nota, allenta un po' e risali.</p>
+      <div class="row" style="margin-bottom:12px">
+        <label class="check small"><input type="checkbox" id="tuneHold" checked> Tono continuo (altrimenti pizzicata)</label>
+      </div>
+      <div class="strings" id="strBtns" data-nonote></div>
+    </div>
+    <div class="card">
+      <h2>Accordatore con microfono</h2>
+      <p class="small muted" style="margin:6px 0 10px">Pizzica una corda e leggi di quanto è fuori. Se la vista in cui stai usando questa pagina non permette il microfono, usa i toni di riferimento qui sopra.</p>
+      <button class="btn" id="micBtn">Attiva il microfono</button>
+      <div id="micMsg" class="msg" style="margin-top:10px" hidden></div>
+      <div id="micBox" hidden>
+        <div class="row" style="justify-content:space-between;margin-top:14px"><b class="big" id="micNote" style="font-size:40px">–</b><span class="mono muted" id="micHz">– Hz</span></div>
+        <div class="meter" aria-hidden="true"><i id="micNeedle"></i></div>
+        <p id="micState" class="lead">Pizzica una corda</p>
+      </div>
+    </div>
+    <div class="card">
+      <h2>Ogni giorno</h2>
+      <ul class="plain small">
+        <li>Accorda la chitarra all'inizio di ogni sessione. Le corde nuove si allungano e calano per qualche giorno: è normale.</li>
+        <li>Se un accordo suona storto anche con le dita giuste, ricontrolla l'accordatura prima di dubitare di te.</li>
+        <li>Metti il capotasto subito dietro il tasto, non sopra, e riaccorda dopo averlo messo.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+</div>
+
+<script>
+(()=>{
+"use strict";
+const KEY="chitarra12-v1";
+let S={done:{},best:{},log:{},open:null,tab:"percorso",nota:"both"};
+let storageOk=true;
+try{
+  const r=localStorage.getItem(KEY);
+  if(r){const o=JSON.parse(r);
+    if(o&&typeof o==="object"){
+      for(const k of ["done","best","log"])if(o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k]))S[k]=o[k];
+      if(typeof o.open==="number")S.open=o.open;
+      if(typeof o.tab==="string")S.tab=o.tab;
+      if(["both","intl","it"].includes(o.nota))S.nota=o.nota;
+    }}
+}catch(e){storageOk=false}
+const $=s=>document.querySelector(s);
+const $$=s=>document.querySelectorAll(s);
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){$("#saveWarn").hidden=false}};
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`};
+
+/* ---------- Notazione: internazionale (C D E), italiana (Do Re Mi) o entrambe ---------- */
+const IT_N={C:"Do",D:"Re",E:"Mi",F:"Fa",G:"Sol",A:"La",B:"Si"};
+const IT_Q={"":"",m:" min",m7:" min7","7":"7",maj7:" maj7",dim:" dim",sus4:" sus4"};
+const NOTE_RE=/(^|[^A-Za-z0-9#])([A-G])(#|b)?(maj7|m7|m|7|dim|sus4)?(?![A-Za-z0-9ª])/g;
+function convText(s){
+  if(S.nota==="intl")return s;
+  return s.replace(NOTE_RE,(m,pre,n,acc,q)=>{
+    const en=n+(acc||"")+(q||""),it=IT_N[n]+(acc||"")+IT_Q[q||""];
+    return pre+(S.nota==="it"?it:`${en} (${it})`);
+  });
+}
+/* Converte i nomi degli accordi nei testi appena renderizzati. Va chiamata una sola volta per nodo. */
+function applyNote(root){
+  if(S.nota==="intl"||!root)return;
+  const w=document.createTreeWalker(root,NodeFilter.SHOW_TEXT),a=[];
+  while(w.nextNode())a.push(w.currentNode);
+  a.forEach(n=>{const p=n.parentElement;if(!p||/^(SCRIPT|STYLE)$/.test(p.nodeName)||p.closest("[data-nonote]"))return;
+    const v=convText(n.nodeValue);if(v!==n.nodeValue)n.nodeValue=v});
+}
+const NOTA_OPT=[["both","Entrambe"],["intl","C D E"],["it","Do Re Mi"]];
+function renderNota(){
+  $("#notaSel").innerHTML=`<span class="small muted">Note:</span>`+NOTA_OPT.map(([k,l])=>`<button class="chip ${k===S.nota?"on":""}" data-act="nota" data-k="${k}" aria-pressed="${k===S.nota}">${l}</button>`).join("");
+}
+
+/* ---------- Accordi ---------- */
+const CH={
+ Em:{it:`Mi minore`,t:"min",f:[0,2,2,0,0,0],fi:[0,2,3,0,0,0],tip:`Due dita vicine sul secondo tasto di 5ª e 4ª corda. Suonano tutte e sei le corde.`},
+ Am:{it:`La minore`,t:"min",f:[-1,0,2,2,1,0],fi:[0,0,2,3,1,0],tip:`Stessa forma di Em spostata di una corda in basso, più l'indice sulla 2ª. Salta la 6ª corda.`},
+ E:{it:`Mi maggiore`,t:"maj",f:[0,2,2,1,0,0],fi:[0,2,3,1,0,0],tip:`Come Em più l'indice sulla 3ª corda, primo tasto. Suonano tutte e sei le corde.`},
+ A:{it:`La maggiore`,t:"maj",f:[-1,0,2,2,2,0],fi:[0,0,1,2,3,0],tip:`Tre dita in fila sul secondo tasto di 4ª, 3ª e 2ª corda. Parti dalla 5ª corda.`},
+ D:{it:`Re maggiore`,t:"maj",f:[-1,-1,0,2,3,2],fi:[0,0,0,1,3,2],tip:`Un triangolo sulle tre corde sottili. Suonano solo le ultime quattro corde.`},
+ C:{it:`Do maggiore`,t:"maj",f:[-1,3,2,0,1,0],fi:[0,3,2,0,1,0],tip:`Scala di tre dita: anulare, medio, indice. Salta la 6ª corda. È uno dei cambi più utili da allenare.`},
+ G:{it:`Sol maggiore`,t:"maj",f:[3,2,0,0,0,3],fi:[2,1,0,0,0,3],tip:`Medio sulla 6ª, indice sulla 5ª, anulare sulla 1ª. Suonano tutte e sei le corde. Se il mignolo è comodo, usalo sulla 1ª.`},
+ Dm:{it:`Re minore`,t:"min",f:[-1,-1,0,2,3,1],fi:[0,0,0,2,3,1],tip:`Come D ma con l'indice sul primo tasto della 1ª corda. Suonano le ultime quattro corde.`},
+ E7:{it:`Mi settima`,t:"7",f:[0,2,0,1,0,0],fi:[0,2,0,1,0,0],tip:`Come E senza il dito sulla 4ª corda. Due dita sole: la usi per Bella ciao e per il blues.`},
+ A7:{it:`La settima`,t:"7",f:[-1,0,2,0,2,0],fi:[0,0,1,0,2,0],tip:`Come A ma con la 3ª corda libera. Due dita sole.`},
+ D7:{it:`Re settima`,t:"7",f:[-1,-1,0,2,1,2],fi:[0,0,0,2,1,3],tip:`Triangolo capovolto rispetto a D. Suonano le ultime quattro corde.`},
+ G7:{it:`Sol settima`,t:"7",f:[3,2,0,0,0,1],fi:[3,2,0,0,0,1],tip:`Come G ma con l'indice sul primo tasto della 1ª corda.`},
+ C7:{it:`Do settima`,t:"7",f:[-1,3,2,3,1,0],fi:[0,3,2,4,1,0],tip:`Come C più il mignolo sulla 3ª corda, terzo tasto. Se non ci arrivi, rimandalo di qualche settimana.`},
+ B7:{it:`Si settima`,t:"7",f:[-1,2,1,2,0,2],fi:[0,2,1,3,0,4],tip:`Quattro dita, la più scomoda del gruppo. Va spesso insieme a E: E e B7 sono il giro base in Mi.`},
+ Fmaj7:{it:`Fa maggiore settima`,t:"adv",f:[-1,-1,3,2,1,0],fi:[0,0,3,2,1,0],tip:`Non è un F: ha una nota in più (Mi) e suona più morbido. Si usa spesso al posto di F finché il barré non esce, ma per il suono originale passa a F mini barré.`},
+ F:{it:`Fa maggiore (mini barré)`,t:"adv",f:[-1,-1,3,2,1,1],fi:[0,0,3,2,1,1],barre:{fret:1,from:4,to:5},tip:`L'indice appoggiato di lato copre 1ª e 2ª corda sul primo tasto. È il vero F, su quattro corde.`},
+ Fb:{it:`Fa maggiore (barré completo)`,t:"adv",f:[1,3,3,2,1,1],fi:[1,3,4,2,1,1],barre:{fret:1,from:0,to:5},tip:`Esercizio per le settimane 11 e 12. Se per ora non esce pulito, è normale: servono mesi.`}
+};
+const lbl=n=>n==="Fb"?"F barré":n;
+const FILTERS=[["all","Tutti"],["maj","Maggiori"],["min","Minori"],["7","Settime"],["adv","Fa e avanzati"]];
+const STR_TUNE=[82.41,110,146.83,196,246.94,329.63];
+
+function chordSVG(name,label){
+  const c=CH[name],x0=20,dx=16,y0=32,dy=22,W=120,H=y0+5*dy+8;
+  let s=`<svg class="diag" viewBox="0 0 ${W} ${H}" role="img" aria-label="${esc(label||("Diagramma di "+name))}">`;
+  for(let i=0;i<=5;i++)s+=`<line class="fr" x1="${x0}" x2="${x0+5*dx}" y1="${y0+i*dy}" y2="${y0+i*dy}"/>`;
+  s+=`<line class="nut" x1="${x0}" x2="${x0+5*dx}" y1="${y0}" y2="${y0}" stroke-width="4"/>`;
+  for(let i=0;i<6;i++)s+=`<line class="st" x1="${x0+i*dx}" x2="${x0+i*dx}" y1="${y0}" y2="${y0+5*dy}"/>`;
+  c.f.forEach((f,i)=>{const x=x0+i*dx;
+    if(f===-1)s+=`<path class="xx" d="M${x-4} 14L${x+4} 22M${x+4} 14L${x-4} 22"/>`;
+    else if(f===0)s+=`<circle class="mk" cx="${x}" cy="18" r="4.5"/>`;});
+  const b=c.barre;
+  if(b){const cy=y0+(b.fret-.5)*dy;s+=`<rect class="dot" x="${x0+b.from*dx-8}" y="${cy-8}" width="${(b.to-b.from)*dx+16}" height="16" rx="8"/>`;}
+  c.f.forEach((f,i)=>{if(f<=0)return;
+    const inB=b&&f===b.fret&&i>=b.from&&i<=b.to;
+    const cx=x0+i*dx,cy=y0+(f-.5)*dy;
+    if(!inB)s+=`<circle class="dot" cx="${cx}" cy="${cy}" r="8"/>`;
+    if(c.fi[i])s+=`<text x="${cx}" y="${cy+3.5}">${c.fi[i]}</text>`;});
+  return s+`</svg>`;
+}
+const chordDesc=n=>{const c=CH[n];return `Diagramma di ${lbl(n)}, ${c.it}: `+c.f.map((f,i)=>`corda ${6-i} ${f<0?"muta":f===0?"libera":"tasto "+f}`).join(", ")};
+
+/* ---------- Progressioni e pattern ----------
+   Nei giri delle canzoni ogni voce dura lo stesso numero di battiti: gli accordi più lunghi sono ripetuti. */
+const PROGS=[
+ {id:"Em-Am",n:"Em – Am",c:["Em","Am"],bpm:60,k:"pair"},
+ {id:"A-D",n:"A – D",c:["A","D"],bpm:60,k:"pair"},
+ {id:"E-A",n:"E – A",c:["E","A"],bpm:60,k:"pair"},
+ {id:"G-C",n:"G – C",c:["G","C"],bpm:60,k:"pair"},
+ {id:"C-Am",n:"C – Am",c:["C","Am"],bpm:60,k:"pair"},
+ {id:"Am-Dm",n:"Am – Dm",c:["Am","Dm"],bpm:60,k:"pair"},
+ {id:"G-D",n:"G – D",c:["G","D"],bpm:60,k:"pair"},
+ {id:"Am-E7",n:"Am – E7",c:["Am","E7"],bpm:60,k:"pair"},
+ {id:"C-Fmaj7",n:"C – Fmaj7",c:["C","Fmaj7"],bpm:60,k:"pair"},
+ {id:"Am-Fmaj7",n:"Am – Fmaj7",c:["Am","Fmaj7"],bpm:60,k:"pair"},
+ {id:"C-F",n:"C – F mini barré",c:["C","F"],bpm:60,k:"pair"},
+ {id:"A7-D7",n:"A7 – D7",c:["A7","D7"],bpm:60,k:"pair"},
+ {id:"E-B7",n:"E – B7",c:["E","B7"],bpm:60,k:"pair"},
+ {id:"wild",n:"Wild Thing (A D E D)",c:["A","D","E","D"],bpm:80,k:"song"},
+ {id:"knock",n:"Knockin' on Heaven's Door (G D Am / G D C)",c:["G","D","Am","Am","G","D","C","C"],bpm:70,k:"song"},
+ {id:"bella",n:"Bella ciao (Am E7)",c:["Am","E7","Am","E7"],bpm:80,k:"song"},
+ {id:"letitbe",n:"Let It Be (C G Am F / C G F C), con Fmaj7",c:["C","G","Am","Fmaj7","C","G","Fmaj7","C"],bpm:70,k:"song"},
+ {id:"letitbeF",n:"Let It Be (C G Am F / C G F C), con F mini barré",c:["C","G","Am","F","C","G","F","C"],bpm:70,k:"song"},
+ {id:"stand",n:"Stand By Me (G Em C D G)",c:["G","G","Em","Em","C","D","G","G"],bpm:80,k:"song"},
+ {id:"hey",n:"Hey Joe (C G D A E)",c:["C","G","D","A","E"],bpm:70,k:"song"},
+ {id:"blues",n:"Blues in La, 12 battute",c:["A7","A7","A7","A7","D7","D7","A7","A7","E7","D7","A7","E7"],bpm:80,k:"song"},
+ {id:"zombie",n:"Zombie (Em C G D)",c:["Em","C","G","D"],bpm:85,k:"song"}
+];
+const PG=Object.fromEntries(PROGS.map(p=>[p.id,p]));
+const PATS=[
+ {id:"p0",n:"Solo click 4/4",b:4,s:"--------",d:"Nessun pattern: usa il click per le prove libere."},
+ {id:"p00",n:"Solo click 3/4",b:3,s:"------",d:"Tre quarti, per i valzer."},
+ {id:"p1",n:"Quarti in giù",b:4,s:"D-D-D-D-",d:"Un colpo in giù a ogni battito. Parti da qui."},
+ {id:"p2",n:"Giù, giù-su",b:4,s:"D-DUD-DU",d:"Giù sull'1, giù-su sul 2, ripeti. Il primo pattern che ti fa suonare davvero."},
+ {id:"p3",n:"Ottavi giù-su",b:4,s:"DUDUDUDU",d:"Il braccio oscilla senza mai fermarsi. Allena la regolarità. Con lo swing diventa il ritmo del blues."},
+ {id:"p4",n:"Il pattern universale",b:4,s:"D-DU-UDU",d:"Giù, giù-su, su-giù-su. Con questo accompagni la maggior parte delle canzoni pop e folk."},
+ {id:"p5",n:"Valzer 3/4",b:3,s:"D-D-DU",d:"Tre colpi, l'ultimo con il su. Per i brani in 3/4."},
+ {id:"p6",n:"Basso e colpo",b:4,s:"B-D-B-D-",d:"Basso sull'1 e sul 3 (la nota più grave dell'accordo), colpo sul 2 e sul 4. Stile country e folk."},
+ {id:"p7",n:"Basso e colpo con su",b:4,s:"B-DUB-DU",d:"Come il precedente, con il su dopo ogni colpo."}
+];
+const PT=Object.fromEntries(PATS.map(p=>[p.id,p]));
+const glyph={D:"↓",U:"↑",B:"●","-":"·"};
+function labels(b){const a=[];for(let i=1;i<=b;i++)a.push(i,"&");return a}
+function patHTML(p,live){
+  const n=p.b*2;
+  let h=`<div class="pat${live?" livepat":""}" data-nonote style="grid-template-columns:repeat(${n},minmax(0,1fr))">`;
+  labels(p.b).forEach(l=>h+=`<div class="lbl">${l}</div>`);
+  [...p.s].forEach((ch,i)=>h+=`<div class="${i%2===0?"beat":""}" data-i="${i}">${glyph[ch]}</div>`);
+  return h+`</div>`;
+}
+const dotsHTML=b=>`<div class="dots livedots">${"<i></i>".repeat(b)}</div>`;
+const TR_HTML=`<div class="row trbox" hidden><div class="trsvg"></div><div><div class="big trc">–</div><p class="nextwrap">Prossimo: <b class="trn">–</b></p><p class="small muted trbar"></p></div></div>`;
+const capoOpts=()=>Array.from({length:8},(_,i)=>`<option value="${i}" ${i===M.capo?"selected":""}>${i?i+"° tasto":"nessuno"}</option>`).join("");
+
+/* ---------- Percorso ----------
+   rt: [minuti, testo, tipo, argomento, opzioni]. Tipi: tune, spider, chords, pairs, rhythm, song, free.
+   Opzioni: {capo, swing}. sb: giro della canzone (bpc = battiti per voce del giro, pattern, BPM, swing). */
+const W=[
+ {w:1,t:`Accordare e primi suoni`,goal:`Accordare la chitarra, trovare una postura comoda e suonare i primi tre accordi con le corde pulite.`,
+  ch:["Em","Am","E"],pairs:["Em-Am"],target:8,pats:[["p1",60]],song:null,
+  rt:[[2,`Accorda con l'accordatore, dalla 6ª alla 1ª corda.`,"tune"],[3,`Spider: dita 1-2-3-4 sui tasti 1-2-3-4, corda per corda, piano. Una nota per click.`,"spider"],[6,`Forma e controllo: monta Em, Am, E. Pizzica le corde una alla volta e cerca i ronzii.`,"chords"],[4,`Quarti in giù a 60 BPM: prima conta a voce "1 2 3 4" sulle corde mute, poi suona Em.`,"rhythm"]],
+  tip:`Pollice dietro il manico, polso morbido, punte delle dita vicino al tasto. Le dita fanno male per un paio di settimane: sessioni brevi e frequenti aiutano.`,
+  g:[`Accordo la chitarra da solo in meno di 3 minuti`,`Em, Am, E puliti tre volte su tre`,`Quarti in giù a 60 BPM per un minuto senza fermarmi`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:2,t:`Altri due accordi e la prima canzone`,goal:`Arrivare a cinque accordi aperti e suonare un brano intero con A, D ed E.`,
+  ch:["A","D"],pairs:["Em-Am","A-D","E-A"],target:10,pats:[["p1",70],["p3",60]],song:"wild",sb:{bpc:4,pat:"p1",bpm:80},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[6,`Cambi su A–D, E–A, Em–Am. Cambi lenti e puliti.`,"pairs"],[4,`Quarti in giù a 70 BPM, poi ottavi giù-su a 60 su un accordo solo.`,"rhythm"],[5,`Wild Thing: A D E D, un accordo per battuta, quarti in giù a 80 BPM.`,"song"]],
+  tip:`Prepara il cambio con le dita già in movimento mentre suona l'ultimo colpo. Meglio un cambio lento e pulito di uno veloce e sporco.`,
+  g:[`Almeno 10 cambi puliti al minuto su A–D`,`Wild Thing dall'inizio alla fine`,`Ottavi giù-su regolari a 60 BPM`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:3,t:`Accordi che aprono il repertorio`,goal:`Aggiungere C, G e Dm. Suonare il pattern giù, giù-su cambiando accordo a tempo.`,
+  ch:["C","G","Dm"],pairs:["G-C","C-Am","Am-Dm","G-D"],target:15,pats:[["p2",70]],song:"knock",sb:{bpc:4,pat:"p2",bpm:70},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[7,`Cambi su G–C, C–Am, Am–Dm, G–D.`,"pairs"],[4,`Pattern giù, giù-su a 70 BPM: prima a voce, poi corde mute, poi su un accordo.`,"rhythm"],[4,`Knockin' on Heaven's Door: G e D una battuta ciascuno, Am due battute; poi G, D e C per due battute.`,"song"]],
+  tip:`G e C sono la coppia più usata in assoluto. Dedicale più tempo del resto.`,
+  g:[`15 cambi al minuto su G–C`,`C, G, Dm puliti tre volte su tre`,`Knockin' on Heaven's Door con il pattern giù, giù-su`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:4,t:`Il pattern universale`,goal:`Imparare il pattern universale lentamente e aggiungere E7.`,
+  ch:["E7"],pairs:["Am-E7","G-C","Am-Dm"],target:20,pats:[["p4",60],["p4",70]],song:"bella",sb:{bpc:4,pat:"p2",bpm:80},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[6,`Cambi: Am–E7, G–C, Am–Dm.`,"pairs"],[5,`Pattern universale a 60 BPM: contalo a voce, poi corde mute, poi un accordo. Quando regge, sali a 70.`,"rhythm"],[4,`Bella ciao: Am E7 Am E7, un accordo per battuta, con il pattern giù, giù-su che conosci già.`,"song"]],
+  tip:`Per imparare il pattern, canta ad alta voce "giù, giù-su, su-giù-su" mentre muovi il braccio con le corde mute.`,
+  g:[`Pattern universale a 60 BPM per un minuto`,`20 cambi al minuto su G–C`,`Bella ciao senza fermarmi`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:5,t:`Il Fa e le canzoni più amate`,goal:`Suonare Fmaj7 e F mini barré e usarli in un brano completo.`,
+  ch:["Fmaj7","F"],pairs:["C-Fmaj7","Am-Fmaj7","C-F"],target:20,pats:[["p4",80]],song:"letitbe",alt:"letitbeF",sb:{bpc:4,pat:"p4",bpm:70},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[7,`Cambi: C–Fmaj7, Am–Fmaj7 e, per qualche minuto, C–F mini barré.`,"pairs"],[5,`Pattern universale a 80 BPM.`,"rhythm"],[7,`Let It Be: C G Am F / C G F C, un accordo per battuta. Al posto di F suoni Fmaj7, che ha un suono un po' diverso.`,"song"],[1,`F mini barré: monta l'accordo e controlla che 1ª e 2ª corda suonino.`,"chords",["F"]]],
+  tip:`Fmaj7 non è F: ha una nota in più e suona più morbido. Va bene per iniziare, ma quando F mini barré esce pulito usa il giro con F, che è quello originale.`,
+  g:[`Fmaj7 pulito tre volte su tre`,`Let It Be dall'inizio alla fine`,`Pattern universale a 80 BPM per un minuto`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:6,t:`Primo controllo e il valzer`,goal:`Consolidare, imparare il valzer 3/4 e registrarti per ascoltarti da fuori.`,
+  ch:[],pairs:["Em-Am","G-C","C-Am"],target:25,pats:[["p5",90],["p4",80]],song:"stand",sb:{bpc:4,pat:"p4",bpm:80},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[6,`Cambi: G–C, Em–Am, C–Am. Punta a 25 al minuto.`,"pairs"],[5,`Valzer 3/4 a 90 BPM.`,"rhythm"],[7,`Stand By Me: G due battute, Em due, C e D una ciascuno, poi G due. Registrati con il telefono.`,"song"],[2,`Riascolta: senti dove rallenti o ti fermi.`,"free"]],
+  tip:`Ascoltarsi è scomodo e utilissimo: i difetti che senti nella registrazione sono quelli che gli altri sentono davvero.`,
+  g:[`25 cambi al minuto su almeno una coppia`,`Stand By Me suonata a tempo`,`Ho registrato due canzoni e le ho riascoltate`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:7,t:`Basso e colpo, il capotasto`,goal:`Alternare nota di basso e colpo, provare il capotasto e aggiungere A7 e D7.`,
+  ch:["A7","D7"],pairs:["A7-D7","E-A","G-D"],target:25,pats:[["p6",70],["p7",70]],song:"hey",sb:{bpc:8,pat:"p7",bpm:70},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[5,`Cambi: A7–D7, E–A, G–D.`,"pairs"],[6,`Basso e colpo: trova la nota più grave dell'accordo e alternala al colpo.`,"rhythm"],[8,`Hey Joe: C G D A E, lento, un accordo ogni due battute.`,"song"],[1,`Metti il capotasto sul 2° tasto e rifai G–C. L'audio dell'app sale insieme alla tua chitarra.`,"pairs",["G-C"],{capo:2}]],
+  tip:`Nel basso e colpo suona la nota più grave dell'accordo: per C è la 5ª corda, per G la 6ª, per D la 4ª.`,
+  g:[`Basso e colpo a 70 BPM su un accordo`,`Hey Joe con il pattern basso e colpo`,`Ho usato il capotasto almeno una volta`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:8,t:`Il blues in La`,goal:`Suonare un giro di 12 battute con A7, D7 ed E7, aggiungere B7 e dare lo swing al ritmo.`,
+  ch:["B7"],pairs:["A7-D7","E-B7","Am-E7"],target:25,pats:[["p3",90],["p4",90]],song:"blues",sb:{bpc:4,pat:"p3",bpm:80,swing:true},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[5,`Cambi A7–D7, E–B7 e Am–E7. E–B7 è il giro base in Mi.`,"pairs"],[10,`Blues in La: 12 battute (A7 ×4, D7 ×2, A7 ×2, E7 D7 A7 E7), ottavi con swing a 80 BPM.`,"song"],[5,`Swing: ottavi lunghi-corti, il colpo in su arriva leggermente in ritardo. Ascolta prima l'app, poi suona insieme.`,"rhythm",["p3",80],{swing:true}]],
+  tip:`Il blues si regge su un giro che ritorna. Impara a sentirlo e ti accorgi dei cambi senza leggere.`,
+  g:[`Blues in La per tre giri senza errori`,`10 cambi al minuto su E–B7`,`Conosco a memoria il giro delle 12 battute`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:9,t:`Capotasto e voce`,goal:`Suonare e cantare insieme e trasportare le canzoni con il capotasto.`,
+  ch:[],pairs:["G-C","G-D","Em-Am"],target:25,pats:[["p4",80]],song:"knock",sb:{bpc:4,pat:"p4",bpm:70},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[4,`Cambi su G–C e G–D.`,"pairs"],[6,`Canta una sola nota o canticchia mentre fai il pattern su un accordo.`,"rhythm"],[8,`Knockin' on Heaven's Door cantata. Cambia il capotasto finché trovi la tonalità giusta per la tua voce, e imposta lo stesso capotasto nell'app.`,"song"],[2,`Registrati e riascolta.`,"free"]],
+  tip:`Per cantare e suonare insieme, parla il testo a tempo mentre suoni un accordo. Poi aggiungi la melodia. La mano destra non deve mai rallentare.`,
+  g:[`Ho cantato un ritornello intero suonando`,`So trovare il capotasto giusto per la mia voce`,`Ho mantenuto il tempo cantando`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:10,t:`Dinamica e musica d'insieme`,goal:`Suonare piano e forte, fermarti e ripartire a tempo, suonare con una base o con un'altra persona.`,
+  ch:[],pairs:["G-C","C-Am","Em-Am"],target:28,pats:[["p4",85]],song:"zombie",sb:{bpc:4,pat:"p4",bpm:85},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[7,`Cambi su tre coppie a scelta.`,"pairs"],[8,`Zombie: Em C G D, un accordo per battuta. Strofa piano, ritornello forte.`,"song"],[5,`Stop: sull'1 fermati e smorza le corde con il palmo, riparti sull'1 successivo.`,"rhythm"],[5,`Suona con il giro dell'app o con un amico: quando uno suona, l'altro ascolta.`,"song"]],
+  tip:`Alterna chi suona e chi osserva: l'attenzione a un altro musicista migliora il tempo più di un esercizio da solo.`,
+  g:[`Ho suonato strofa piano e ritornello forte`,`Ho fatto uno stop a tempo`,`Ho suonato con una base o con un'altra persona`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:11,t:`La scaletta`,goal:`Mettere insieme quattro canzoni e suonarle una dopo l'altra senza fermarti.`,
+  ch:["Fb"],pairs:["G-C","C-Am","A-D"],target:30,pats:[["p4",90]],song:"stand",sb:{bpc:4,pat:"p4",bpm:90},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[5,`Cambi: punta a 30 al minuto.`,"pairs"],[15,`Scaletta: quattro canzoni di fila, con 5 secondi tra una e l'altra.`,"free"],[5,`Facoltativo: prova il barré completo di F per qualche minuto.`,"chords",["Fb"]]],
+  tip:`Fermati solo alla fine di ogni canzone. Imparare a continuare dopo un errore è la parte più importante di suonare dal vivo.`,
+  g:[`Quattro canzoni di fila senza fermarmi a metà`,`30 cambi al minuto su una coppia`,`So partire dalla prima battuta senza controllare il manico`,`Ho praticato almeno 5 giorni su 7`]},
+ {w:12,t:`Esame finale e dopo`,goal:`Registrare la scaletta, confrontarla con la settimana 6 e scegliere i prossimi passi.`,
+  ch:[],pairs:["G-C","C-Am","Em-Am"],target:30,pats:[["p4",90]],song:"letitbe",alt:"letitbeF",sb:{bpc:4,pat:"p4",bpm:75},
+  rt:[[2,`Accordatura.`,"tune"],[3,`Spider.`,"spider"],[5,`Cambi: record personale su una coppia.`,"pairs"],[15,`Registra la scaletta con quattro canzoni. Riascoltala il giorno dopo.`,"free"],[5,`Scegli un obiettivo per le prossime 12 settimane: barré, fingerpicking o scala pentatonica.`,"free"]],
+  tip:`Confronta la registrazione con quella della settimana 6. Il miglioramento si vede più in questo confronto che in qualsiasi sensazione del momento.`,
+  g:[`Ho registrato la scaletta e l'ho riascoltata`,`Ho confrontato con la registrazione della settimana 6`,`Ho scelto il prossimo obiettivo`,`Ho praticato almeno 5 giorni su 7`]}
+];
+const DL=["L","M","M","G","V","S","D"];
+const DLN=["lunedì","martedì","mercoledì","giovedì","venerdì","sabato","domenica"];
+const wDone=w=>w.g.filter((_,i)=>S.done[`w${w.w}t${i}`]).length;
+const wMin=w=>w.rt.reduce((a,r)=>a+r[0],0);
+function currentWeek(){return (W.find(w=>wDone(w)<w.g.length)||W[W.length-1]).w}
+function overall(){let d=0,t=0;W.forEach(w=>{d+=wDone(w);t+=w.g.length});const p=Math.round(d/t*100);$("#ovTxt").textContent=p+"% completato";$("#ovBar").style.width=p+"%"}
+/* Impostazioni dei cambi per raggiungere l'obiettivo della settimana: battiti per accordo e BPM */
+const pairPlan=t=>t<=15?{bpc:4,bpm:Math.max(40,t*4)}:{bpc:2,bpm:Math.min(200,t*2)};
+
+function weekCard(w){
+  const d=wDone(w),open=S.open===w.w,cur=currentWeek()===w.w;
+  let h=`<article class="card week ${d===w.g.length?"done":""}"><button class="wh" data-act="week" data-w="${w.w}" aria-expanded="${open}"><span class="wnum">${w.w}</span><span class="wt"><b>${w.t}</b><span>${wMin(w)} min al giorno${cur?" · settimana in corso":""}</span></span><span class="wprog">${d}/${w.g.length}</span></button>`;
+  if(open){
+    h+=`<div class="wbody"><p class="lead">${w.goal}</p><div><button class="btn pri" data-act="session" data-w="${w.w}">Inizia una sessione guidata</button></div>`;
+    if(w.ch.length){h+=`<div><h4>Accordi nuovi</h4><div class="diagrams">`+w.ch.map(n=>`<div class="mini">${chordSVG(n,chordDesc(n))}<b>${lbl(n)}</b></div>`).join("")+`</div></div>`;}
+    h+=`<div><h4>Routine del giorno (${wMin(w)} min)</h4><ul class="plain routine">`+w.rt.map(r=>`<li><span class="min">${r[0]} min</span><span>${r[1]}</span></li>`).join("")+`</ul></div>`;
+    h+=`<div class="cols"><div><h4>Cambi di accordo · obiettivo ${w.target}/min</h4><div class="row">`+w.pairs.map(p=>`<button class="btn sm" data-act="trypair" data-p="${p}">${PG[p].n}</button>`).join("")+`</div></div>`;
+    h+=`<div><h4>Ritmica</h4><div class="row">`+w.pats.map(([p,b])=>`<button class="btn sm" data-act="tryrhythm" data-p="${p}" data-b="${b}">${PT[p].n} · ${b} BPM</button>`).join("")+`</div></div></div>`;
+    if(w.song){const s=PG[w.song],sb=w.sb,bars=s.c.length*sb.bpc/4;
+      h+=`<div><h4>Canzone</h4><p><b>${s.n}</b></p><p class="small muted" style="margin:2px 0 8px">Giro di ${bars} battute · ${PT[sb.pat].n}${sb.swing?" con swing":""} · ${sb.bpm} BPM. Cerca il testo con gli accordi e controlla la tonalità: qui c'è solo il giro base.</p><div class="row"><button class="btn sm pri" data-act="trysong" data-w="${w.w}">Allenati con il giro</button>${w.alt?`<button class="btn sm" data-act="trysong" data-w="${w.w}" data-alt="${w.alt}">Giro con F mini barré</button>`:""}</div></div>`;}
+    h+=`<div><h4>Consiglio</h4><p>${w.tip}</p></div>`;
+    h+=`<div><h4>Traguardi</h4><ul class="plain">`+w.g.map((g,i)=>{const k=`w${w.w}t${i}`;return `<li><label class="check"><input type="checkbox" data-act="goal" data-k="${k}" ${S.done[k]?"checked":""}><span>${g}</span></label></li>`}).join("")+`</ul></div>`;
+    h+=`<div><h4>Giorni praticati</h4><div class="days" data-nonote>`+DL.map((l,i)=>{const k=`w${w.w}d${i}`;return `<button data-act="day" data-k="${k}" aria-pressed="${!!S.done[k]}" aria-label="${DLN[i]}">${l}</button>`}).join("")+`</div></div></div>`;
+  }
+  return h+`</article>`;
+}
+function renderPercorso(){
+  const cw=W.find(w=>w.w===currentWeek());
+  $("#p-percorso").innerHTML=`<div class="stack"><div class="card"><p class="small muted">Sessione di oggi · settimana ${cw.w}</p><h2 style="margin:4px 0 6px">${cw.t}</h2><p class="muted">${cw.rt.length} passi in ${wMin(cw)} minuti. L'app ti guida passo per passo con timer, metronomo e accordi già impostati: tu devi solo suonare.</p><button class="btn pri" style="margin-top:12px" data-act="session" data-w="${cw.w}">Inizia la sessione di oggi</button></div>`+W.map(weekCard).join("")+`</div>`;
+  overall();applyNote($("#p-percorso"));
+}
+
+/* ---------- Tab ---------- */
+let curTab="percorso";
+function setTab(t){
+  if(t!=="sessione"&&sess)stopSession();
+  if(t!=="accordatore"){stopTone();micStop()}
+  curTab=t;
+  if(t!=="sessione"){S.tab=t;save()}
+  $$("#tabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===t));
+  $$(".panel").forEach(p=>p.hidden=p.id!=="p-"+t);
+  window.scrollTo({top:0});
+}
+
+/* ---------- Audio ---------- */
+let AC=null;
+function ctx(){if(!AC){const C=window.AudioContext||window.webkitAudioContext;if(!C)return null;AC=new C()}if(AC.state==="suspended")AC.resume();return AC}
+const ksCache={};
+function ks(c,freq){
+  const k=freq.toFixed(2);if(ksCache[k])return ksCache[k];
+  const sr=c.sampleRate,N=Math.round(sr*2.4),b=c.createBuffer(1,N,sr),d=b.getChannelData(0),p=Math.max(2,Math.round(sr/freq)),r=new Float32Array(p);
+  for(let i=0;i<p;i++)r[i]=Math.random()*2-1;
+  let idx=0;
+  for(let n=0;n<N;n++){const nx=(idx+1)%p,v=r[idx];d[n]=v;r[idx]=.4985*(v+r[nx]);idx=nx}
+  return ksCache[k]=b;
+}
+function pluck(c,freq,t,g,dest){const s=c.createBufferSource();s.buffer=ks(c,freq);const o=c.createGain();o.gain.value=g;s.connect(o).connect(dest||c.destination);s.start(t)}
+let lastStrum=null;
+/* Pennata a un istante preciso: D giù (tutte le corde suonate), U su (corde acute), B nota di basso.
+   capo sposta l'intonazione come il capotasto; la pennata precedente viene smorzata. */
+function strumAt(name,t,kind,capo,dest){
+  const c=AC,ch=CH[name];if(!c||!ch)return;
+  if(lastStrum)lastStrum.gain.setTargetAtTime(0,t,.02);
+  const bus=c.createGain();bus.connect(dest||c.destination);lastStrum=bus;
+  const idx=[];ch.f.forEach((f,s)=>{if(f>=0)idx.push(s)});
+  let list=idx,g=.18,gap=.014;
+  if(kind==="B"){list=[idx[0]];g=.34;gap=0}
+  else if(kind==="U"){list=idx.slice(-4).reverse();g=.12;gap=.012}
+  list.forEach((s,j)=>pluck(c,STR_TUNE[s]*Math.pow(2,(ch.f[s]+(capo||0))/12),t+j*gap,g,bus));
+}
+function strum(name){const c=ctx();if(!c)return;strumAt(name,c.currentTime+.02,"D",0,null)}
+function beep(f,d,g){const c=ctx();if(!c)return;const t=c.currentTime+.01,o=c.createOscillator(),a=c.createGain();o.frequency.value=f;a.gain.setValueAtTime(g||.4,t);a.gain.exponentialRampToValueAtTime(.001,t+d);o.connect(a).connect(c.destination);o.start(t);o.stop(t+d+.05)}
+function chime(){beep(880,.25);setTimeout(()=>beep(1320,.45),220)}
+
+/* ---------- Accordi tab ---------- */
+let filt="all";
+function renderChords(){
+  $("#chordFilter").innerHTML=FILTERS.map(([k,l])=>`<button class="chip ${k===filt?"on":""}" data-act="filter" data-k="${k}">${l}</button>`).join("");
+  $("#chordGrid").innerHTML=Object.keys(CH).filter(n=>filt==="all"||CH[n].t===filt).map(n=>{const c=CH[n];
+    return `<article class="card chord">${chordSVG(n,chordDesc(n))}<div><h3>${lbl(n)}</h3><p class="it">${c.it}</p><p class="tip">${c.tip}</p><button class="btn sm" data-act="hear" data-c="${n}">Ascolta</button></div></article>`}).join("");
+  applyNote($("#chordGrid"));
+}
+
+/* ---------- Esercizi tab ---------- */
+const EX=[
+ {t:`Spider 1-2-3-4`,m:3,d:`Mano sinistra: indice sul 1° tasto, medio sul 2°, anulare sul 3°, mignolo sul 4°, corda per corda dalla 6ª alla 1ª e ritorno. Piano, una nota alla volta, senza far ronzare le corde.`},
+ {t:`Tieni e controlla`,m:4,d:`Monta un accordo e pizzica le corde una alla volta. Ogni corda che non suona pulita ti dice quale dito sistemare. Rilascia, ripeti.`},
+ {t:`Cambio in anticipo`,m:4,d:`Sull'ultimo battito prima del cambio prepara le dita: nel metronomo "Prossimo" si illumina proprio lì. Se il pattern finisce con un colpo in su, all'inizio puoi suonarlo a corde libere mentre le dita si spostano.`},
+ {t:`Mano destra fantasma`,m:3,d:`Corde mute, solo il braccio che fa il pattern. Quando il ritmo è automatico, aggiungi l'accordo.`},
+ {t:`Basso e colpo`,m:4,d:`Pizzica la nota più grave dell'accordo con il plettro, poi strimpella il resto. Alterna per tutto il giro.`},
+ {t:`Canta e suona`,m:5,d:`Parla il testo a tempo su un accordo. Poi canticchia la melodia. Poi aggiungi i cambi. La mano destra non rallenta mai.`},
+ {t:`Registrati`,m:3,d:`Registra 30 secondi con il telefono e riascolta senza giudicare. Segna una cosa da migliorare e una che funziona.`},
+ {t:`Ripasso a freddo`,m:5,d:`All'inizio della sessione, prima del riscaldamento, suona una canzone che sapevi la settimana scorsa. Misura quanto ricordi.`}
+];
+function renderEsercizi(){
+  const sel=$("#oneSel").value;
+  $("#oneSel").innerHTML=PROGS.filter(p=>p.k==="pair").map(p=>`<option value="${p.id}">${p.n}</option>`).join("");
+  if(sel)$("#oneSel").value=sel;
+  applyNote($("#oneSel"));
+  oneUpdate();
+  $("#patList").innerHTML=PATS.filter(p=>p.s.replace(/-/g,"")).map(p=>`<div><div class="row" style="justify-content:space-between"><b>${p.n}</b><button class="btn sm" data-act="tryrhythm" data-p="${p.id}" data-b="70">Ascolta a tempo</button></div>${patHTML(p)}<p class="small muted">${p.d}</p></div>`).join("");
+  $("#exLib").innerHTML=EX.map(e=>`<article class="card"><h3>${e.t}</h3><p class="mono small" style="color:var(--accent);margin:2px 0 6px">${e.m} min</p><p class="small">${e.d}</p></article>`).join("");
+  applyNote($("#patList"));applyNote($("#exLib"));
+}
+function oneUpdate(){
+  const id=$("#oneSel").value,p=PG[id];if(!p)return;
+  $("#oneDiag").innerHTML=p.c.map(n=>`<div class="mini">${chordSVG(n,chordDesc(n))}<b>${lbl(n)}</b></div>`).join("");
+  applyNote($("#oneDiag"));
+  const b=S.best[id],lg=S.log[id]||[];
+  $("#oneTarget").textContent=b?`Record: ${b} cambi`:"Nessun record";
+  $("#oneHist").textContent=lg.length?"Ultimi risultati: "+lg.slice(-6).map(x=>x.n).join(" → "):"";
+  $("#oneIn").value=lg.length?lg[lg.length-1].n:0;
+}
+/* Test del minuto: 3 secondi di preparazione e 60 di prova, misurati sull'orologio e non sul conteggio dei tick */
+let one=null,onePending=null;
+function oneLock(on){$("#oneStart").disabled=on;$("#oneSel").disabled=on}
+function oneStart(){
+  if(one||onePending)return;ctx();
+  one={id:$("#oneSel").value,t0:performance.now(),shown:null,phase:null};
+  $("#oneEntry").hidden=true;oneLock(true);
+  $("#oneInfo").textContent="Preparati: dita sul primo accordo";
+  one.int=setInterval(oneTick,100);oneTick();
+}
+function oneTick(){
+  const el=(performance.now()-one.t0)/1000;
+  const phase=el<3?"pre":"go",label=phase==="pre"?3-Math.floor(el):Math.max(0,Math.ceil(63-el));
+  if(label!==one.shown){
+    if(phase==="pre")beep(660,.12);
+    else if(one.phase==="pre"){beep(1100,.35);$("#oneInfo").textContent="Via! Conta a voce i cambi puliti"}
+    one.shown=label;one.phase=phase;$("#oneTime").textContent=label;
+  }
+  if(phase==="go"&&el>=63)oneEnd();
+}
+function oneEnd(){
+  clearInterval(one.int);onePending=one.id;one=null;chime();
+  $("#oneTime").textContent="0";$("#oneInfo").textContent="Tempo!";$("#oneEntry").hidden=false;
+  try{$("#oneIn").focus({preventScroll:true})}catch(e){}
+}
+function oneClose(msg){
+  onePending=null;$("#oneEntry").hidden=true;oneLock(false);$("#oneTime").textContent=60;oneUpdate();$("#oneInfo").textContent=msg;
+}
+function oneSave(){
+  const id=onePending,n=parseInt($("#oneIn").value,10);
+  if(!id||isNaN(n)||n<0)return;
+  const lg=S.log[id]||(S.log[id]=[]);lg.push({d:today(),n});if(lg.length>30)lg.shift();
+  let msg=`${n} cambi salvati.`;
+  if(n>(S.best[id]||0)){S.best[id]=n;msg=`${n} cambi: nuovo record.`}
+  save();oneClose(msg);
+}
+
+/* ---------- Metronomo ----------
+   Lo scheduler programma gli eventi in anticipo sull'orologio audio. Tutto passa da un bus che si spegne allo stop.
+   bpc = battiti per voce del giro; g = numero del battito dall'avvio. */
+const M={on:false,bpm:80,pat:"p2",sub:false,acc:true,swing:false,play:true,pchord:"G",capo:0,tr:false,prog:"G-C",bpc:4,
+  step:0,bar:0,gb:0,next:0,q:[],timer:null,bus:null,shownG:0};
+function setBpm(v){
+  M.bpm=Math.max(40,Math.min(200,Math.round(v)));
+  $("#bpmNum").textContent=M.bpm;$("#bpmRange").value=M.bpm;
+  $$(".livebpm").forEach(x=>x.textContent=M.bpm+" BPM");
+  updChg();
+}
+function updChg(){$$(".livechg").forEach(x=>x.textContent=`${Math.round(M.bpm/M.bpc)} cambi al minuto`)}
+const chordAtBeat=g=>{const c=PG[M.prog].c;return c[Math.floor(g/M.bpc)%c.length]};
+function renderMetro(){
+  $("#patChips").innerHTML=PATS.map(p=>`<button class="chip ${p.id===M.pat?"on":""}" data-act="mpat" data-p="${p.id}">${p.n}</button>`).join("");
+  const p=PT[M.pat];$("#mPat").innerHTML=patHTML(p,true);$("#patDesc").textContent=p.d;
+  $("#beatDots").innerHTML=dotsHTML(p.b);
+  $("#trProg").innerHTML=PROGS.map(x=>`<option value="${x.id}" ${x.id===M.prog?"selected":""}>${x.n}</option>`).join("");
+  $("#patChord").innerHTML=Object.keys(CH).map(n=>`<option value="${n}" ${n===M.pchord?"selected":""}>${lbl(n)}</option>`).join("");
+  $("#capoSel").innerHTML=capoOpts();
+  applyNote($("#trProg"));applyNote($("#patChord"));
+  $("#patChordRow").hidden=M.tr;
+  $("#trOn").checked=M.tr;$("#trBpc").value=String(M.bpc);$("#optPlay").checked=M.play;
+  $("#optSwing").checked=M.swing;$("#optSub").checked=M.sub;
+  trShow(M.on?M.shownG:0);
+}
+function trShow(g){
+  M.shownG=g;
+  const bars=Math.floor(g/PT[M.pat].b)+1;
+  $$(".trbox").forEach(b=>{
+    b.hidden=!M.tr;b.classList.remove("soon");if(!M.tr)return;
+    const c=PG[M.prog].c,i=Math.floor(g/M.bpc)%c.length,cur=c[i],nx=c[(i+1)%c.length];
+    b.querySelector(".trc").textContent=convText(lbl(cur));
+    b.querySelector(".trn").textContent=convText(lbl(nx));
+    b.querySelector(".trsvg").innerHTML=chordSVG(cur,chordDesc(cur));
+    b.querySelector(".trbar").textContent=`Battuta ${bars}`;
+  });
+}
+function click(t,f,g){
+  const c=AC,o=c.createOscillator(),a=c.createGain();o.frequency.value=f;o.type="sine";
+  a.gain.setValueAtTime(g,t);a.gain.exponentialRampToValueAtTime(.001,t+.06);
+  o.connect(a).connect(M.bus||c.destination);o.start(t);o.stop(t+.08);
+}
+function sched(){
+  const p=PT[M.pat],n=p.b*2;
+  while(M.next<AC.currentTime+.12){
+    const s=M.step,even=s%2===0,g=even?M.gb:M.gb-1;
+    /* Eventi già passati (pagina rallentata o in secondo piano): si saltano invece di suonarli tutti insieme */
+    if(M.next>=AC.currentTime-.01){
+      const ch=p.s[s]||"-",cg=M.play?.3:.5;
+      if(even)click(M.next,(s===0&&M.acc)?1250:880,cg);
+      else if(M.sub)click(M.next,660,.15);
+      if(M.play&&ch!=="-")strumAt(M.tr?chordAtBeat(g):M.pchord,M.next,ch,M.capo,M.bus);
+      M.q.push({t:M.next,s,g});
+    }
+    const beat=60/M.bpm;
+    M.next+=beat*(even?(M.swing?2/3:.5):(M.swing?1/3:.5));
+    if(even)M.gb++;
+    if(++M.step>=n){M.step=0;M.bar++}
+  }
+}
+function metroUI(){
+  if(!M.on)return;
+  while(M.q.length&&M.q[0].t<=AC.currentTime){
+    const e=M.q.shift();
+    $$(".livepat [data-i]").forEach(x=>x.classList.toggle("act",+x.dataset.i===e.s));
+    if(e.s%2===0){
+      $$(".livedots").forEach(d=>[...d.children].forEach((x,i)=>x.classList.toggle("on",i===e.s/2)));
+      if(M.tr){
+        if(e.g%M.bpc===0)trShow(e.g);
+        /* Ultimo battito prima di un cambio: illumina "Prossimo" */
+        if((e.g+1)%M.bpc===0&&chordAtBeat(e.g+1)!==chordAtBeat(e.g))$$(".trbox").forEach(b=>b.classList.add("soon"));
+      }
+    }
+  }
+  requestAnimationFrame(metroUI);
+}
+function metroStart(){
+  const c=ctx();if(!c||M.on)return;
+  M.on=true;M.step=0;M.bar=0;M.gb=0;M.q=[];M.next=c.currentTime+.08;
+  M.bus=c.createGain();M.bus.connect(c.destination);
+  M.timer=setInterval(sched,25);sched();requestAnimationFrame(metroUI);
+  $("#mStart").textContent="Ferma";
+}
+function metroStop(){
+  if(!M.on)return;
+  M.on=false;clearInterval(M.timer);M.q=[];
+  if(M.bus&&AC){const b=M.bus;b.gain.setTargetAtTime(0,AC.currentTime,.01);setTimeout(()=>{try{b.disconnect()}catch(e){}},400)}
+  M.bus=null;lastStrum=null;
+  $("#mStart").textContent="Avvia";
+  $$(".livedots i,.livepat .act").forEach(x=>x.classList.remove("on","act"));
+  trShow(0);
+}
+/* Applica un cambio di impostazioni ripartendo da capo se il metronomo sta suonando */
+function retune(fn){const was=M.on;metroStop();fn();if(was)metroStart()}
+let taps=[];
+function tapTempo(){
+  const n=performance.now();if(taps.length&&n-taps[taps.length-1]>2000)taps=[];
+  taps.push(n);if(taps.length>6)taps.shift();
+  if(taps.length>=2){const iv=[];for(let i=1;i<taps.length;i++)iv.push(taps[i]-taps[i-1]);setBpm(60000/(iv.reduce((a,b)=>a+b)/iv.length))}
+}
+function useRhythm(pid,bpm){
+  metroStop();M.pat=pid;M.tr=false;M.swing=false;setBpm(+bpm);renderMetro();setTab("metronomo");
+}
+function useSong(wn,alt){
+  const w=W.find(x=>x.w===wn);metroStop();
+  M.tr=true;M.prog=alt||w.song;M.bpc=w.sb.bpc;M.pat=w.sb.pat;M.swing=!!w.sb.swing;setBpm(w.sb.bpm);
+  renderMetro();setTab("metronomo");
+}
+
+/* ---------- Sessione guidata ---------- */
+let sess=null;
+const METRO_KINDS=["spider","pairs","rhythm","song"];
+const STEP_T={tune:"Accordatura",spider:"Riscaldamento",chords:"Accordi",pairs:"Cambi di accordo",rhythm:"Ritmica",song:"Canzone",free:"Pratica libera"};
+const fmt=s=>Math.floor(s/60)+":"+String(Math.max(0,s)%60).padStart(2,"0");
+function startSession(wn){
+  stopSession();
+  sess={w:W.find(x=>x.w===wn),i:0,left:0,run:false,fin:false,end:false,int:null,deadline:0,runStart:0,played:0};
+  setTab("sessione");stepSetup();
+}
+function sessPause(){
+  if(!sess||!sess.run)return;
+  const now=performance.now();
+  clearInterval(sess.int);sess.run=false;
+  sess.left=Math.max(0,Math.ceil((sess.deadline-now)/1000));
+  sess.played+=(now-sess.runStart)/1000;
+  metroStop();
+}
+function stopSession(){
+  if(!sess)return;sessPause();clearInterval(sess.int);metroStop();stopTone();sess=null;$("#p-sessione").innerHTML="";
+}
+function stepSetup(){
+  const w=sess.w,st=w.rt[sess.i],k=st[2],a=st[3],o=st[4]||{};
+  sessPause();sess.fin=false;sess.left=st[0]*60;
+  stopTone();
+  M.capo=o.capo||0;M.swing=!!o.swing;M.sub=false;
+  if(k==="spider"){M.pat="p0";M.tr=false;setBpm(60)}
+  else if(k==="pairs"){const pl=pairPlan(w.target);M.pat="p1";M.tr=true;M.prog=(a||w.pairs)[0];M.bpc=pl.bpc;setBpm(pl.bpm)}
+  else if(k==="rhythm"){const r=a||w.pats[0];M.pat=r[0];M.tr=false;M.pchord=PG[w.pairs[0]].c[0];setBpm(r[1])}
+  else if(k==="song"){M.pat=w.sb.pat;M.tr=true;M.prog=w.song;M.bpc=w.sb.bpc;M.swing=!!w.sb.swing;setBpm(w.sb.bpm)}
+  renderMetro();renderSession();
+}
+function renderSession(){
+  const el=$("#p-sessione");if(!sess){el.innerHTML="";return}
+  const w=sess.w;
+  if(sess.end){
+    const mins=Math.round(sess.played/60);
+    el.innerHTML=`<div class="card stack"><h2>Sessione completata</h2><p class="muted">Settimana ${w.w}: hai suonato ${mins<1?"meno di un minuto":mins===1?"1 minuto":mins+" minuti"} con il timer attivo, su ${wMin(w)} previsti. Segna il giorno nel percorso e, se hai raggiunto un traguardo, spuntalo.</p><div class="row"><button class="btn pri" data-act="smark">Segna oggi come giorno praticato</button><button class="btn" data-act="sexit">Torna al percorso</button></div><p class="small" id="smarkMsg" style="color:var(--ok)"></p></div>`;
+    return;
+  }
+  const st=w.rt[sess.i],k=st[2],a=st[3],uses=METRO_KINDS.includes(k),last=sess.i===w.rt.length-1;
+  let tool="";
+  if(k==="tune")tool=`<div class="strings" data-nonote>${strBtns()}</div>`;
+  else if(k==="chords")tool=`<div class="diagrams">${(a||w.ch).map(n=>`<div class="mini">${chordSVG(n,chordDesc(n))}<b>${lbl(n)}</b><button class="btn sm" data-act="hear" data-c="${n}" style="margin-top:4px">Ascolta</button></div>`).join("")}</div>`;
+  if(uses){
+    let chips="";
+    if(k==="pairs")chips=(a||w.pairs).map(p=>`<button class="chip ${p===M.prog?"on":""}" data-act="spair" data-p="${p}">${PG[p].n}</button>`).join("")
+      +[4,2].map(b=>`<button class="chip ${b===M.bpc?"on":""}" data-act="sbpc" data-b="${b}">ogni ${b} battiti</button>`).join("");
+    else if(k==="rhythm")chips=(a?[a]:w.pats).map(([p,b])=>`<button class="chip ${p===M.pat?"on":""}" data-act="spat" data-p="${p}" data-b="${b}">${PT[p].n} · ${b}</button>`).join("");
+    else if(k==="song")chips=`<span class="chip on">${PG[w.song].n}</span>`;
+    tool+=`${chips?`<div class="row">${chips}</div>`:""}
+      ${k==="pairs"?`<p class="small muted" style="text-align:center">Adesso: <b class="livechg"></b> · obiettivo della settimana: ${w.target}</p>`:""}
+      <div class="row" style="justify-content:center"><button class="btn sm" data-act="sbpm" data-d="-5">−5</button><b class="mono livebpm">${M.bpm} BPM</b><button class="btn sm" data-act="sbpm" data-d="5">+5</button>
+        <label class="check small"><input type="checkbox" data-act="splay" ${M.play?"checked":""}> Suona il pattern</label>
+        <label class="small">Capotasto <select data-act="scapo">${capoOpts()}</select></label></div>
+      ${dotsHTML(PT[M.pat].b)}${M.pat.startsWith("p0")?"":patHTML(PT[M.pat],true)}${TR_HTML}`;
+  }
+  el.innerHTML=`<div class="card stack">
+    <div class="row" style="justify-content:space-between"><span class="small muted">Settimana ${w.w} · passo ${sess.i+1} di ${w.rt.length}</span><button class="btn sm" data-act="sexit">Esci</button></div>
+    <div class="steps">${w.rt.map((_,i)=>`<i class="${i<sess.i?"on":i===sess.i?"cur":""}"></i>`).join("")}</div>
+    <h2>${STEP_T[k]}</h2><p class="lead">${st[1]}</p>
+    <div style="text-align:center"><div class="stime">${fmt(sess.left)}</div>
+      <div class="row" style="justify-content:center;margin-top:12px">
+        <button class="btn" data-act="sprev" ${sess.i===0?"disabled":""}>Indietro</button>
+        <button class="btn ${sess.fin?"":"pri"}" data-act="srun">${sess.run?"Pausa":sess.fin?"Ricomincia":"Avvia"}</button>
+        <button class="btn ${sess.fin?"pri":""}" data-act="snext">${last?"Fine":"Passo successivo"}</button>
+      </div>
+      ${sess.fin?`<p class="small" style="color:var(--ok);margin-top:8px">Tempo finito. Passa al prossimo quando sei pronto.</p>`:""}
+    </div>
+    ${tool}</div>`;
+  applyNote(el);updChg();trShow(M.on?M.shownG:0);
+  if(tone)$$(`.sbtn[data-i="${tone.i}"]`).forEach(b=>b.setAttribute("aria-pressed","true"));
+}
+function sessRun(){
+  const st=sess.w.rt[sess.i],uses=METRO_KINDS.includes(st[2]);
+  if(sess.run)sessPause();
+  else{
+    if(sess.fin){sess.left=st[0]*60;sess.fin=false}
+    sess.run=true;sess.runStart=performance.now();sess.deadline=sess.runStart+sess.left*1000;
+    if(uses)metroStart();
+    sess.int=setInterval(()=>{
+      const left=Math.max(0,Math.ceil((sess.deadline-performance.now())/1000));
+      const t=$("#p-sessione .stime");if(t)t.textContent=fmt(left);
+      if(left<=0){sessPause();sess.left=0;sess.fin=true;chime();renderSession()}
+    },250);
+  }
+  renderSession();
+}
+
+/* ---------- Accordatore ---------- */
+const STR=[["6","Mi","E2",82.41],["5","La","A2",110],["4","Re","D3",146.83],["3","Sol","G3",196],["2","Si","B3",246.94],["1","Mi","E4",329.63]];
+let tone=null;
+function stopTone(){
+  if(tone&&AC){try{tone.g.gain.cancelScheduledValues(AC.currentTime);tone.g.gain.setTargetAtTime(0,AC.currentTime,.05);tone.o.stop(AC.currentTime+.3)}catch(e){}}
+  tone=null;
+  $$(".sbtn").forEach(b=>b.setAttribute("aria-pressed","false"));
+}
+function playString(i){
+  const c=ctx();if(!c)return;
+  const was=tone&&tone.i===i;stopTone();
+  const f=STR[i][3];
+  if(!$("#tuneHold").checked){pluck(c,f,c.currentTime+.02,.5);return}
+  if(was)return;
+  const o=c.createOscillator(),g=c.createGain();
+  const re=new Float32Array(9),im=new Float32Array([0,1,.55,.4,.28,.2,.14,.1,.07]);
+  o.setPeriodicWave(c.createPeriodicWave(re,im));o.frequency.value=f;
+  g.gain.setValueAtTime(0,c.currentTime);g.gain.linearRampToValueAtTime(.28,c.currentTime+.05);
+  o.connect(g).connect(c.destination);o.start();
+  tone={o,g,i};
+  $$(`.sbtn[data-i="${i}"]`).forEach(b=>b.setAttribute("aria-pressed","true"));
+}
+const strBtns=()=>STR.map((s,i)=>`<button class="sbtn" data-act="str" data-i="${i}" aria-pressed="false"><b>${s[1]} · ${s[2][0]}</b><span>${s[0]}ª corda · ${s[2]} · ${s[3].toFixed(1)} Hz</span></button>`).join("");
+function renderTuner(){$("#strBtns").innerHTML=strBtns()}
+let mic=null,micPending=false;
+function detect(buf,sr){
+  let r=0;for(let i=0;i<buf.length;i++)r+=buf[i]*buf[i];r=Math.sqrt(r/buf.length);if(r<.012)return null;
+  const Wn=2048,minL=Math.floor(sr/420),maxL=Math.floor(sr/70);
+  const cm=new Float32Array(maxL+2);
+  let run=0;
+  for(let t=1;t<=maxL+1;t++){let s=0;for(let i=0;i<Wn;i++){const x=buf[i]-buf[i+t];s+=x*x}run+=s;cm[t]=s*t/(run||1)}
+  let tau=-1;
+  for(let t=minL;t<=maxL;t++){if(cm[t]<.14){while(t+1<=maxL&&cm[t+1]<cm[t])t++;tau=t;break}}
+  if(tau<0)return null;
+  const a=cm[tau-1],b=cm[tau],c=cm[tau+1],den=a-2*b+c,sh=den?(a-c)/(2*den):0;
+  return sr/(tau+sh);
+}
+async function micStart(){
+  if(mic||micPending)return;
+  const msg=$("#micMsg"),btn=$("#micBtn");
+  micPending=true;btn.disabled=true;
+  try{
+    if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia)throw new Error("unsupported");
+    const st=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:false,noiseSuppression:false,autoGainControl:false}});
+    if(curTab!=="accordatore"){st.getTracks().forEach(t=>t.stop());return}
+    const c=ctx(),src=c.createMediaStreamSource(st),an=c.createAnalyser();an.fftSize=4096;src.connect(an);
+    mic={st,src,an,buf:new Float32Array(an.fftSize),hist:[],on:true};
+    $("#micBox").hidden=false;msg.hidden=true;btn.textContent="Ferma il microfono";micLoop();
+  }catch(e){
+    msg.hidden=false;msg.textContent="Il microfono non è disponibile in questa vista. Usa i toni di riferimento qui sopra e accorda a orecchio, oppure apri la pagina in un browser che consente il microfono.";
+  }finally{micPending=false;btn.disabled=false}
+}
+function micStop(){
+  if(!mic)return;mic.on=false;mic.st.getTracks().forEach(t=>t.stop());try{mic.src.disconnect()}catch(e){}mic=null;
+  $("#micBox").hidden=true;$("#micBtn").textContent="Attiva il microfono";
+}
+function micLoop(){
+  if(!mic||!mic.on)return;
+  mic.an.getFloatTimeDomainData(mic.buf);
+  const f=detect(mic.buf,AC.sampleRate);
+  if(f){
+    mic.hist.push(f);if(mic.hist.length>5)mic.hist.shift();
+    const m=[...mic.hist].sort((a,b)=>a-b)[Math.floor(mic.hist.length/2)];
+    let bi=0,bc=1e9;STR.forEach((s,i)=>{const cc=1200*Math.log2(m/s[3]);if(Math.abs(cc)<Math.abs(bc)){bc=cc;bi=i}});
+    const c=Math.max(-50,Math.min(50,bc));
+    $("#micNote").textContent=`${STR[bi][1]} · ${STR[bi][2][0]} · ${STR[bi][0]}ª`;
+    $("#micHz").textContent=m.toFixed(1)+" Hz";
+    $("#micNeedle").style.left=(50+c)+"%";
+    $("#micState").textContent=Math.abs(bc)<5?"Intonata":bc<0?"Troppo bassa: stringi un po'":"Troppo alta: allenta un po'";
+    $("#micState").style.color=Math.abs(bc)<5?"var(--ok)":"var(--fg)";
+  }
+  setTimeout(micLoop,70);
+}
+
+/* ---------- Eventi ---------- */
+document.addEventListener("click",e=>{
+  const t=e.target.closest("[data-act],[data-tab]");if(!t||t.disabled)return;
+  if(t.dataset.tab){setTab(t.dataset.tab);return}
+  const a=t.dataset.act;
+  if(a==="week"){S.open=S.open===+t.dataset.w?null:+t.dataset.w;save();renderPercorso()}
+  else if(a==="day"){S.done[t.dataset.k]=!S.done[t.dataset.k];save();renderPercorso()}
+  else if(a==="nota"){S.nota=t.dataset.k;save();renderNota();renderPercorso();renderChords();renderEsercizi();renderMetro();renderSession()}
+  else if(a==="filter"){filt=t.dataset.k;renderChords()}
+  else if(a==="hear")strum(t.dataset.c);
+  else if(a==="tryrhythm")useRhythm(t.dataset.p,t.dataset.b);
+  else if(a==="trysong")useSong(+t.dataset.w,t.dataset.alt);
+  else if(a==="trypair"){setTab("esercizi");if(!one&&!onePending){$("#oneSel").value=t.dataset.p;oneUpdate()}}
+  else if(a==="mpat")retune(()=>{M.pat=t.dataset.p;renderMetro()});
+  else if(a==="str")playString(+t.dataset.i);
+  else if(a==="onein"){const x=$("#oneIn");x.value=Math.max(0,(parseInt(x.value,10)||0)+ +t.dataset.d)}
+  else if(a==="session")startSession(+t.dataset.w);
+  else if(sess){
+    if(a==="srun")sessRun();
+    else if(a==="snext"){if(sess.i>=sess.w.rt.length-1){sessPause();stopTone();sess.end=true;renderSession()}else{sess.i++;stepSetup()}window.scrollTo({top:0})}
+    else if(a==="sprev"){if(sess.i>0){sess.i--;stepSetup()}}
+    else if(a==="sexit"){S.open=sess.w.w;save();setTab("percorso");renderPercorso()}
+    else if(a==="smark"){const di=(new Date().getDay()+6)%7;S.done[`w${sess.w.w}d${di}`]=true;save();renderPercorso();$("#smarkMsg").textContent=`Segnato: ${DLN[di]}, settimana ${sess.w.w}.`}
+    else if(a==="spair")retune(()=>{M.prog=t.dataset.p;renderMetro();renderSession()});
+    else if(a==="sbpc")retune(()=>{M.bpc=+t.dataset.b;renderMetro();renderSession()});
+    else if(a==="spat")retune(()=>{M.pat=t.dataset.p;setBpm(+t.dataset.b);renderMetro();renderSession()});
+    else if(a==="sbpm")setBpm(M.bpm+ +t.dataset.d);
+  }
+});
+document.addEventListener("change",e=>{
+  const t=e.target;if(!t.dataset)return;
+  if(t.dataset.act==="goal"){S.done[t.dataset.k]=t.checked;save();renderPercorso()}
+  else if(t.dataset.act==="splay"){M.play=t.checked;$("#optPlay").checked=M.play}
+  else if(t.dataset.act==="scapo"){M.capo=+t.value;$("#capoSel").value=t.value}
+});
+$("#oneSel").addEventListener("change",oneUpdate);
+$("#oneStart").addEventListener("click",oneStart);
+$("#oneSave").addEventListener("click",oneSave);
+$("#oneDiscard").addEventListener("click",()=>oneClose("Risultato scartato."));
+$("#bpmDn").addEventListener("click",()=>setBpm(M.bpm-1));
+$("#bpmUp").addEventListener("click",()=>setBpm(M.bpm+1));
+$("#bpmRange").addEventListener("input",e=>setBpm(+e.target.value));
+$("#tap").addEventListener("click",tapTempo);
+$("#optSub").addEventListener("change",e=>M.sub=e.target.checked);
+$("#optAcc").addEventListener("change",e=>M.acc=e.target.checked);
+$("#optSwing").addEventListener("change",e=>M.swing=e.target.checked);
+$("#optPlay").addEventListener("change",e=>M.play=e.target.checked);
+$("#patChord").addEventListener("change",e=>M.pchord=e.target.value);
+$("#capoSel").addEventListener("change",e=>M.capo=+e.target.value);
+$("#mStart").addEventListener("click",()=>M.on?metroStop():metroStart());
+$("#trOn").addEventListener("change",e=>retune(()=>{M.tr=e.target.checked;$("#patChordRow").hidden=M.tr;trShow(0)}));
+$("#trProg").addEventListener("change",e=>retune(()=>{M.prog=e.target.value;setBpm(PG[M.prog].bpm);trShow(0)}));
+$("#trBpc").addEventListener("change",e=>retune(()=>{M.bpc=+e.target.value;trShow(0)}));
+$("#micBtn").addEventListener("click",()=>mic?micStop():micStart());
+$("#tuneHold").addEventListener("change",stopTone);
+
+/* ---------- Avvio ---------- */
+if(!storageOk)$("#saveWarn").hidden=false;
+if(!S.open)S.open=currentWeek();
+renderNota();renderPercorso();renderChords();renderEsercizi();renderMetro();renderTuner();
+setTab(["percorso","accordi","esercizi","metronomo","accordatore"].includes(S.tab)?S.tab:"percorso");
+})();
+</script>
+<script>
+if("serviceWorker" in navigator&&location.protocol==="https:")addEventListener("load",()=>navigator.serviceWorker.register("sw.js").catch(()=>{}));
+</script>
+</body>
+</html>
