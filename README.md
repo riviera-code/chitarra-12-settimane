@@ -8,7 +8,7 @@ Un'app web per imparare a strimpellare e accompagnare canzoni con la chitarra ac
 
 - **Percorso** di 12 settimane: accordi nuovi, routine del giorno, traguardi da spuntare e giorni praticati.
 - **Sessione guidata**: ti accompagna passo per passo nella routine con timer, metronomo e accordi già impostati.
-- **Spiegazione vocale** della settimana 1, con trascrizione (voce generata con ElevenLabs).
+- **Spiegazione vocale** per ogni settimana, con trascrizione (voce generata con ElevenLabs).
 - **Accordi**: 17 diagrammi con diteggiatura e ascolto. Nomi in notazione internazionale, italiana o entrambe.
 - **Esercizi**: test dei cambi di accordo in un minuto con storico, pattern ritmici, esercizi da ripetere.
 - **Metronomo**: pattern suonati con la chitarra, cambi di accordo a tempo, swing, capotasto.
