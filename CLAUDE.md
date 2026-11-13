@@ -5,6 +5,6 @@ Pubblicata con GitHub Pages dal branch `main`: https://riviera-code.github.io/ch
 
 - Ogni push su `main` aggiorna il sito in un paio di minuti.
 - Quando cambia un file in cache offline, aumenta la versione di `CACHE` in `sw.js`.
-- Esiste anche una copia come Artifact su claude.ai (https://claude.ai/artifact/QTBP4Pcb6J2mX3Yhyo5TVJ), ferma alla prima versione. La fonte principale è questo repository.
+- Esiste anche una copia come Artifact su claude.ai (https://claude.ai/artifact/QTBP4Pcb6J2mX3Yhyo5TVJ), uguale al primo commit e non si aggiorna da sola. La fonte principale è questo repository.
 - I progressi dell'utente stanno in `localStorage` con chiave `chitarra12-v1`: non cambiarne la forma senza migrare i dati.
 - Il codice dei testi usa `applyNote()` per convertire i nomi degli accordi: va chiamata una sola volta per nodo appena renderizzato. Le parti che non vanno convertite hanno `data-nonote`.
