@@ -130,6 +130,13 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .trsvg{width:160px;flex:none}
 .nextwrap{display:inline-block;padding:4px 10px;margin-left:-10px;border-radius:8px;margin-top:8px}
 .trbox.soon .nextwrap{background:var(--accent);color:var(--accent-fg)}
+.trprev{margin-top:16px;padding-top:14px;border-top:1px solid var(--line)}
+.prevh{margin:0 0 8px;font:600 12px var(--f-body);letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.seq{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:12px}
+.mini.sm,.mini.sm svg{width:96px}
+.mini.sm b{font-size:14px}
+.prevd .mini{border:2px solid transparent;border-radius:10px;padding:4px 2px}
+.prevd .mini.on{border-color:var(--accent);background:var(--accent-soft)}
 /* sessione */
 .steps{display:flex;gap:4px}
 .steps i{flex:1;height:6px;border-radius:3px;background:var(--surface2)}
@@ -257,6 +264,7 @@ summary{cursor:pointer;color:var(--muted)}
         </select>
       </div>
       <div class="row trbox" hidden><div class="trsvg"></div><div><div class="big trc">–</div><p class="nextwrap">Prossimo: <b class="trn">–</b></p><p class="small muted trbar"></p></div></div>
+      <div class="trprev" hidden></div>
     </div>
   </div>
 </section>
@@ -433,7 +441,7 @@ function patHTML(p,live){
   return h+`</div>`;
 }
 const dotsHTML=b=>`<div class="dots livedots">${"<i></i>".repeat(b)}</div>`;
-const TR_HTML=`<div class="row trbox" hidden><div class="trsvg"></div><div><div class="big trc">–</div><p class="nextwrap">Prossimo: <b class="trn">–</b></p><p class="small muted trbar"></p></div></div>`;
+const TR_HTML=`<div class="row trbox" hidden><div class="trsvg"></div><div><div class="big trc">–</div><p class="nextwrap">Prossimo: <b class="trn">–</b></p><p class="small muted trbar"></p></div></div><div class="trprev" hidden></div>`;
 const capoOpts=()=>Array.from({length:8},(_,i)=>`<option value="${i}" ${i===M.capo?"selected":""}>${i?i+"° tasto":"nessuno"}</option>`).join("");
 
 /* ---------- Percorso ----------
@@ -796,12 +804,32 @@ function renderMetro(){
   $("#optSwing").checked=M.swing;$("#optSub").checked=M.sub;
   trShow(M.on?M.shownG:0);
 }
+/* Anteprima del giro: sequenza con le durate e diagrammi di tutti gli accordi, con quello attuale evidenziato.
+   Si ricostruisce solo quando cambiano giro, durate o notazione. */
+function trPreview(i){
+  const c=PG[M.prog].c,b=PT[M.pat].b,key=[M.prog,M.bpc,b,S.nota].join("|");
+  $$(".trprev").forEach(el=>{
+    el.hidden=!M.tr;if(!M.tr)return;
+    if(el.dataset.key!==key){
+      el.dataset.key=key;
+      const groups=[];
+      c.forEach((n,j)=>{const last=groups[groups.length-1];if(last&&last.n===n)last.to=j;else groups.push({n,from:j,to:j})});
+      const dur=gr=>{const d=(gr.to-gr.from+1)*M.bpc;return d===b?"":d%b===0?` · ${d/b} battute`:` · ${d} battiti`};
+      el.innerHTML=`<h4 class="prevh">Il giro</h4>
+        <div class="seq" data-nonote>${groups.map(gr=>`<span class="chip" data-from="${gr.from}" data-to="${gr.to}">${convText(lbl(gr.n))}${dur(gr)}</span>`).join("")}</div>
+        <div class="diagrams prevd" data-nonote>${[...new Set(c)].map(n=>`<div class="mini sm" data-c="${n}">${chordSVG(n,chordDesc(n))}<b>${convText(lbl(n))}</b></div>`).join("")}</div>`;
+    }
+    el.querySelectorAll(".seq .chip").forEach(s=>s.classList.toggle("on",i>=+s.dataset.from&&i<=+s.dataset.to));
+    el.querySelectorAll(".prevd .mini").forEach(m=>m.classList.toggle("on",m.dataset.c===c[i]));
+  });
+}
 function trShow(g){
   M.shownG=g;
-  const bars=Math.floor(g/PT[M.pat].b)+1;
+  const bars=Math.floor(g/PT[M.pat].b)+1,c=PG[M.prog].c,i=Math.floor(g/M.bpc)%c.length;
+  trPreview(i);
   $$(".trbox").forEach(b=>{
     b.hidden=!M.tr;b.classList.remove("soon");if(!M.tr)return;
-    const c=PG[M.prog].c,i=Math.floor(g/M.bpc)%c.length,cur=c[i],nx=c[(i+1)%c.length];
+    const cur=c[i],nx=c[(i+1)%c.length];
     b.querySelector(".trc").textContent=convText(lbl(cur));
     b.querySelector(".trn").textContent=convText(lbl(nx));
     b.querySelector(".trsvg").innerHTML=chordSVG(cur,chordDesc(cur));
