@@ -6,5 +6,6 @@ Pubblicata con GitHub Pages dal branch `main`: https://riviera-code.github.io/ch
 - Ogni push su `main` aggiorna il sito in un paio di minuti.
 - Quando cambia un file in cache offline, aumenta la versione di `CACHE` in `sw.js`.
 - Esiste anche una copia come Artifact su claude.ai (https://claude.ai/artifact/QTBP4Pcb6J2mX3Yhyo5TVJ), uguale al primo commit e non si aggiorna da sola. La fonte principale è questo repository.
+- Le spiegazioni vocali stanno in `audio/` e sono collegate dal campo `intro` della settimana in `W`, che contiene anche la trascrizione (deve restare uguale al parlato). Generate con ElevenLabs: voce "Ricasco" (`G1QO6RfZl0zS1DpKDReq`), modello `eleven_v4`. Ogni nuovo file audio va aggiunto a `CORE` in `sw.js`.
 - I progressi dell'utente stanno in `localStorage` con chiave `chitarra12-v1`: non cambiarne la forma senza migrare i dati.
 - Il codice dei testi usa `applyNote()` per convertire i nomi degli accordi: va chiamata una sola volta per nodo appena renderizzato. Le parti che non vanno convertite hanno `data-nonote`.

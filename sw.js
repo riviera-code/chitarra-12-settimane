@@ -1,6 +1,6 @@
 // Funzionamento offline: prima prova la rete (così gli aggiornamenti arrivano subito), se manca usa la copia salvata.
-const CACHE = "chitarra12-v1";
-const CORE = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "icon-180.png"];
+const CACHE = "chitarra12-v2";
+const CORE = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "icon-180.png", "audio/settimana-1-introduzione.mp3"];
 
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting()));

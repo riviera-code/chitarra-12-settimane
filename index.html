@@ -136,6 +136,8 @@ input[type=range]{width:100%;accent-color:var(--accent)}
 .steps i.on{background:var(--accent)}
 .steps i.cur{background:var(--accent);opacity:.45}
 .stime{font:700 60px var(--f-display);font-variant-numeric:tabular-nums;line-height:1}
+audio{width:100%;max-width:520px;display:block}
+summary{cursor:pointer;color:var(--muted)}
 /* tuner */
 .strings{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,130px),1fr));gap:10px}
 .sbtn{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:12px;text-align:left}
@@ -439,6 +441,13 @@ const capoOpts=()=>Array.from({length:8},(_,i)=>`<option value="${i}" ${i===M.ca
    Opzioni: {capo, swing}. sb: giro della canzone (bpc = battiti per voce del giro, pattern, BPM, swing). */
 const W=[
  {w:1,t:`Accordare e primi suoni`,goal:`Accordare la chitarra, trovare una postura comoda e suonare i primi tre accordi con le corde pulite.`,
+  intro:{audio:"audio/settimana-1-introduzione.mp3",text:`Eccoci alla prima settimana. Per sette giorni hai un obiettivo solo: far suonare puliti tre accordi, Mi minore, La minore e Mi maggiore. Bastano quindici minuti al giorno.
+
+Prima di tutto, la postura. Siediti con la schiena dritta e appoggia la chitarra sulla gamba destra, con la cassa vicina al corpo. Il pollice della mano sinistra sta dietro il manico, non sopra. Il polso resta morbido. Tieni corte le unghie della mano sinistra, altrimenti le dita non riescono a premere bene le corde. Il plettro si tiene tra pollice e indice, lasciando sporgere solo la punta.
+
+La sessione ha quattro parti. Si comincia accordando, dalla corda più grave alla più sottile. Poi tre minuti di riscaldamento: un dito per tasto, una nota per ogni click del metronomo. Poi gli accordi: premi con la punta delle dita, vicino al tasto, e pizzica le corde una alla volta. Se una corda ronza o non suona, sistema il dito che la tocca. Infine la ritmica: un colpo in giù a ogni battito, a sessanta battiti al minuto. Conta ad alta voce: uno, due, tre, quattro.
+
+Le punte delle dita faranno un po' male. È normale, e passa in un paio di settimane. Meglio poco ogni giorno che tanto una volta sola. Quando vuoi, premi Avvia e cominciamo.`},
   ch:["Em","Am","E"],pairs:["Em-Am"],target:8,pats:[["p1",60]],song:null,
   rt:[[2,`Accorda con l'accordatore, dalla 6ª alla 1ª corda.`,"tune"],[3,`Spider: dita 1-2-3-4 sui tasti 1-2-3-4, corda per corda, piano. Una nota per click.`,"spider"],[6,`Forma e controllo: monta Em, Am, E. Pizzica le corde una alla volta e cerca i ronzii.`,"chords"],[4,`Quarti in giù a 60 BPM: prima conta a voce "1 2 3 4" sulle corde mute, poi suona Em.`,"rhythm"]],
   tip:`Pollice dietro il manico, polso morbido, punte delle dita vicino al tasto. Le dita fanno male per un paio di settimane: sessioni brevi e frequenti aiutano.`,
@@ -505,6 +514,8 @@ const wDone=w=>w.g.filter((_,i)=>S.done[`w${w.w}t${i}`]).length;
 const wMin=w=>w.rt.reduce((a,r)=>a+r[0],0);
 function currentWeek(){return (W.find(w=>wDone(w)<w.g.length)||W[W.length-1]).w}
 function overall(){let d=0,t=0;W.forEach(w=>{d+=wDone(w);t+=w.g.length});const p=Math.round(d/t*100);$("#ovTxt").textContent=p+"% completato";$("#ovBar").style.width=p+"%"}
+/* Spiegazione vocale con trascrizione, per le settimane che ce l'hanno */
+const introHTML=w=>`<audio controls preload="none" src="${w.intro.audio}"></audio><details class="small" style="margin-top:6px"><summary>Leggi il testo</summary>${w.intro.text.split("\n\n").map(p=>`<p style="margin-top:8px">${p}</p>`).join("")}</details>`;
 /* Impostazioni dei cambi per raggiungere l'obiettivo della settimana: battiti per accordo e BPM */
 const pairPlan=t=>t<=15?{bpc:4,bpm:Math.max(40,t*4)}:{bpc:2,bpm:Math.min(200,t*2)};
 
@@ -513,6 +524,7 @@ function weekCard(w){
   let h=`<article class="card week ${d===w.g.length?"done":""}"><button class="wh" data-act="week" data-w="${w.w}" aria-expanded="${open}"><span class="wnum">${w.w}</span><span class="wt"><b>${w.t}</b><span>${wMin(w)} min al giorno${cur?" · settimana in corso":""}</span></span><span class="wprog">${d}/${w.g.length}</span></button>`;
   if(open){
     h+=`<div class="wbody"><p class="lead">${w.goal}</p><div><button class="btn pri" data-act="session" data-w="${w.w}">Inizia una sessione guidata</button></div>`;
+    if(w.intro)h+=`<div><h4>Introduzione</h4>${introHTML(w)}</div>`;
     if(w.ch.length){h+=`<div><h4>Accordi nuovi</h4><div class="diagrams">`+w.ch.map(n=>`<div class="mini">${chordSVG(n,chordDesc(n))}<b>${lbl(n)}</b></div>`).join("")+`</div></div>`;}
     h+=`<div><h4>Routine del giorno (${wMin(w)} min)</h4><ul class="plain routine">`+w.rt.map(r=>`<li><span class="min">${r[0]} min</span><span>${r[1]}</span></li>`).join("")+`</ul></div>`;
     h+=`<div class="cols"><div><h4>Cambi di accordo · obiettivo ${w.target}/min</h4><div class="row">`+w.pairs.map(p=>`<button class="btn sm" data-act="trypair" data-p="${p}">${PG[p].n}</button>`).join("")+`</div></div>`;
@@ -762,11 +774,14 @@ function useSong(wn,alt){
 /* ---------- Sessione guidata ---------- */
 let sess=null;
 const METRO_KINDS=["spider","pairs","rhythm","song"];
-const STEP_T={tune:"Accordatura",spider:"Riscaldamento",chords:"Accordi",pairs:"Cambi di accordo",rhythm:"Ritmica",song:"Canzone",free:"Pratica libera"};
+const STEP_T={intro:"Introduzione",tune:"Accordatura",spider:"Riscaldamento",chords:"Accordi",pairs:"Cambi di accordo",rhythm:"Ritmica",song:"Canzone",free:"Pratica libera"};
 const fmt=s=>Math.floor(s/60)+":"+String(Math.max(0,s)%60).padStart(2,"0");
 function startSession(wn){
   stopSession();
-  sess={w:W.find(x=>x.w===wn),i:0,left:0,run:false,fin:false,end:false,int:null,deadline:0,runStart:0,played:0};
+  const w=W.find(x=>x.w===wn);
+  /* Passi della sessione: l'eventuale introduzione vocale, poi la routine della settimana */
+  const list=w.intro?[[0,"Ascolta la spiegazione della settimana, poi passa al primo esercizio.","intro"],...w.rt]:w.rt;
+  sess={w,list,i:0,left:0,run:false,fin:false,end:false,int:null,deadline:0,runStart:0,played:0};
   setTab("sessione");stepSetup();
 }
 function sessPause(){
@@ -781,7 +796,7 @@ function stopSession(){
   if(!sess)return;sessPause();clearInterval(sess.int);metroStop();stopTone();sess=null;$("#p-sessione").innerHTML="";
 }
 function stepSetup(){
-  const w=sess.w,st=w.rt[sess.i],k=st[2],a=st[3],o=st[4]||{};
+  const w=sess.w,st=sess.list[sess.i],k=st[2],a=st[3],o=st[4]||{};
   sessPause();sess.fin=false;sess.left=st[0]*60;
   stopTone();
   M.capo=o.capo||0;M.swing=!!o.swing;M.sub=false;
@@ -799,9 +814,10 @@ function renderSession(){
     el.innerHTML=`<div class="card stack"><h2>Sessione completata</h2><p class="muted">Settimana ${w.w}: hai suonato ${mins<1?"meno di un minuto":mins===1?"1 minuto":mins+" minuti"} con il timer attivo, su ${wMin(w)} previsti. Segna il giorno nel percorso e, se hai raggiunto un traguardo, spuntalo.</p><div class="row"><button class="btn pri" data-act="smark">Segna oggi come giorno praticato</button><button class="btn" data-act="sexit">Torna al percorso</button></div><p class="small" id="smarkMsg" style="color:var(--ok)"></p></div>`;
     return;
   }
-  const st=w.rt[sess.i],k=st[2],a=st[3],uses=METRO_KINDS.includes(k),last=sess.i===w.rt.length-1;
+  const L=sess.list,st=L[sess.i],k=st[2],a=st[3],uses=METRO_KINDS.includes(k),last=sess.i===L.length-1,timed=k!=="intro";
   let tool="";
-  if(k==="tune")tool=`<div class="strings" data-nonote>${strBtns()}</div>`;
+  if(k==="intro")tool=introHTML(w);
+  else if(k==="tune")tool=`<div class="strings" data-nonote>${strBtns()}</div>`;
   else if(k==="chords")tool=`<div class="diagrams">${(a||w.ch).map(n=>`<div class="mini">${chordSVG(n,chordDesc(n))}<b>${lbl(n)}</b><button class="btn sm" data-act="hear" data-c="${n}" style="margin-top:4px">Ascolta</button></div>`).join("")}</div>`;
   if(uses){
     let chips="";
@@ -817,23 +833,23 @@ function renderSession(){
       ${dotsHTML(PT[M.pat].b)}${M.pat.startsWith("p0")?"":patHTML(PT[M.pat],true)}${TR_HTML}`;
   }
   el.innerHTML=`<div class="card stack">
-    <div class="row" style="justify-content:space-between"><span class="small muted">Settimana ${w.w} · passo ${sess.i+1} di ${w.rt.length}</span><button class="btn sm" data-act="sexit">Esci</button></div>
-    <div class="steps">${w.rt.map((_,i)=>`<i class="${i<sess.i?"on":i===sess.i?"cur":""}"></i>`).join("")}</div>
+    <div class="row" style="justify-content:space-between"><span class="small muted">Settimana ${w.w} · passo ${sess.i+1} di ${L.length}</span><button class="btn sm" data-act="sexit">Esci</button></div>
+    <div class="steps">${L.map((_,i)=>`<i class="${i<sess.i?"on":i===sess.i?"cur":""}"></i>`).join("")}</div>
     <h2>${STEP_T[k]}</h2><p class="lead">${st[1]}</p>
-    <div style="text-align:center"><div class="stime">${fmt(sess.left)}</div>
+    <div style="text-align:center">${timed?`<div class="stime">${fmt(sess.left)}</div>`:""}
       <div class="row" style="justify-content:center;margin-top:12px">
         <button class="btn" data-act="sprev" ${sess.i===0?"disabled":""}>Indietro</button>
-        <button class="btn ${sess.fin?"":"pri"}" data-act="srun">${sess.run?"Pausa":sess.fin?"Ricomincia":"Avvia"}</button>
-        <button class="btn ${sess.fin?"pri":""}" data-act="snext">${last?"Fine":"Passo successivo"}</button>
+        ${timed?`<button class="btn ${sess.fin?"":"pri"}" data-act="srun">${sess.run?"Pausa":sess.fin?"Ricomincia":"Avvia"}</button>`:""}
+        <button class="btn ${sess.fin||!timed?"pri":""}" data-act="snext">${last?"Fine":"Passo successivo"}</button>
       </div>
-      ${sess.fin?`<p class="small" style="color:var(--ok);margin-top:8px">Tempo finito. Passa al prossimo quando sei pronto.</p>`:""}
+      ${sess.fin?`<p class="small" style="color:var(--ok);margin-top:8px">Tempo finito. Passa al prossimo quando vuoi.</p>`:""}
     </div>
     ${tool}</div>`;
   applyNote(el);updChg();trShow(M.on?M.shownG:0);
   if(tone)$$(`.sbtn[data-i="${tone.i}"]`).forEach(b=>b.setAttribute("aria-pressed","true"));
 }
 function sessRun(){
-  const st=sess.w.rt[sess.i],uses=METRO_KINDS.includes(st[2]);
+  const st=sess.list[sess.i],uses=METRO_KINDS.includes(st[2]);
   if(sess.run)sessPause();
   else{
     if(sess.fin){sess.left=st[0]*60;sess.fin=false}
@@ -941,7 +957,7 @@ document.addEventListener("click",e=>{
   else if(a==="session")startSession(+t.dataset.w);
   else if(sess){
     if(a==="srun")sessRun();
-    else if(a==="snext"){if(sess.i>=sess.w.rt.length-1){sessPause();stopTone();sess.end=true;renderSession()}else{sess.i++;stepSetup()}window.scrollTo({top:0})}
+    else if(a==="snext"){if(sess.i>=sess.list.length-1){sessPause();stopTone();sess.end=true;renderSession()}else{sess.i++;stepSetup()}window.scrollTo({top:0})}
     else if(a==="sprev"){if(sess.i>0){sess.i--;stepSetup()}}
     else if(a==="sexit"){S.open=sess.w.w;save();setTab("percorso");renderPercorso()}
     else if(a==="smark"){const di=(new Date().getDay()+6)%7;S.done[`w${sess.w.w}d${di}`]=true;save();renderPercorso();$("#smarkMsg").textContent=`Segnato: ${DLN[di]}, settimana ${sess.w.w}.`}
