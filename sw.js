@@ -1,5 +1,5 @@
 // Funzionamento offline: prima prova la rete (così gli aggiornamenti arrivano subito), se manca usa la copia salvata.
-const CACHE = "chitarra12-v3";
+const CACHE = "chitarra12-v4";
 const CORE = ["./", "index.html", "manifest.webmanifest", "icon.svg", "icon-192.png", "icon-512.png", "icon-180.png",
   ...Array.from({length: 12}, (_, i) => `audio/settimana-${i + 1}-introduzione.mp3`)];
 

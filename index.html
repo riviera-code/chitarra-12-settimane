@@ -103,6 +103,18 @@ ul.plain{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;g
 .chord h3{font-size:22px}
 .it{color:var(--muted);font-size:13px;margin-bottom:6px}
 .tip{font-size:13px;margin-bottom:8px}
+.memq{display:flex;flex-direction:column;align-items:center;gap:12px;text-align:center;padding:8px 0}
+.memq svg{width:160px;height:auto}
+.memname{font:700 clamp(40px,11vw,64px)/1 var(--f-display)}
+.memopts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;width:100%;max-width:420px}
+.memopts .btn{padding:14px 8px;font-size:17px;font-weight:600}
+.memopts .btn.ok,.memres.ok{border-color:var(--ok);color:var(--ok)}
+.memopts .btn.no,.memres.no{border-color:var(--bad);color:var(--bad)}
+.memopts .btn.ok:disabled,.memopts .btn.no:disabled{opacity:1}
+.memres{font-weight:600}
+.memlist{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,170px),1fr));gap:8px}
+.memlist>div{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 10px;border:1px solid var(--line);border-radius:8px;background:var(--surface2)}
+.pips{display:flex;gap:3px;flex:none}.pips i{width:8px;height:8px;border-radius:50%;border:1px solid var(--accent)}.pips i.on{background:var(--accent)}
 .diag .fr{stroke:var(--muted);stroke-opacity:.55;stroke-width:1.3} .diag .st{stroke:var(--fg);stroke-opacity:.7;stroke-width:1.3} .diag .nut{stroke:var(--fg)}
 .diag .dot{fill:var(--accent)} .diag text{fill:var(--accent-fg);font:700 11px var(--f-body);text-anchor:middle}
 .diag .mk{fill:none;stroke:var(--fg);stroke-width:1.8} .diag .xx{stroke:var(--fg);stroke-width:2}
@@ -171,6 +183,7 @@ summary{cursor:pointer;color:var(--muted)}
   <nav id="tabs" role="tablist">
     <button role="tab" data-tab="percorso">Percorso</button>
     <button role="tab" data-tab="accordi">Accordi</button>
+    <button role="tab" data-tab="memoria">Memoria</button>
     <button role="tab" data-tab="esercizi">Esercizi</button>
     <button role="tab" data-tab="metronomo">Metronomo</button>
     <button role="tab" data-tab="accordatore">Accordatore</button>
@@ -188,6 +201,25 @@ summary{cursor:pointer;color:var(--muted)}
     </div>
     <div class="row" id="chordFilter"></div>
     <div class="grid" id="chordGrid"></div>
+  </div>
+</section>
+
+<section class="panel" id="p-memoria" hidden>
+  <div class="stack">
+    <div class="card">
+      <h2>Memorizza gli accordi</h2>
+      <p class="small muted" style="margin:6px 0 12px">Con il nome: leggi il nome, fai l'accordo sulla chitarra senza guardare, poi controlla il disegno. Con il disegno: guarda la forma e scegli il nome giusto. Gli accordi che sbagli tornano più spesso, quelli che sai tornano di rado.</p>
+      <div class="row" style="margin-bottom:12px">
+        <span class="row" id="memModes" role="group" aria-label="Tipo di esercizio"></span>
+        <select id="memWeek" aria-label="Quali accordi ripassare"></select>
+      </div>
+      <div id="memCard" aria-live="polite"></div>
+    </div>
+    <div class="card">
+      <div class="row" style="justify-content:space-between"><h2>Come stai andando</h2><button class="btn sm" id="memReset">Azzera</button></div>
+      <p class="small muted" style="margin:6px 0 12px">Ogni giusto riempie un pallino, ogni errore li svuota. Con quattro pallini pieni l'accordo è sicuro.</p>
+      <div class="memlist" id="memList"></div>
+    </div>
   </div>
 </section>
 
@@ -306,13 +338,13 @@ summary{cursor:pointer;color:var(--muted)}
 (()=>{
 "use strict";
 const KEY="chitarra12-v1";
-let S={done:{},best:{},log:{},open:null,tab:"percorso",nota:"both"};
+let S={done:{},best:{},log:{},mem:{},open:null,tab:"percorso",nota:"both"};
 let storageOk=true;
 try{
   const r=localStorage.getItem(KEY);
   if(r){const o=JSON.parse(r);
     if(o&&typeof o==="object"){
-      for(const k of ["done","best","log"])if(o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k]))S[k]=o[k];
+      for(const k of ["done","best","log","mem"])if(o[k]&&typeof o[k]==="object"&&!Array.isArray(o[k]))S[k]=o[k];
       if(typeof o.open==="number")S.open=o.open;
       if(typeof o.tab==="string")S.tab=o.tab;
       if(["both","intl","it"].includes(o.nota))S.nota=o.nota;
@@ -711,6 +743,65 @@ function renderChords(){
   applyNote($("#chordGrid"));
 }
 
+/* ---------- Memoria tab ----------
+   Ripasso a scatole: ogni accordo ha un livello da 0 a 4 in S.mem. Un giusto lo alza di uno, un errore lo riporta a 0.
+   I livelli bassi escono più spesso. */
+const MEM_W=[8,5,3,2,1];
+const MEM={mode:"name",wk:0,cur:null,shown:false,ans:null,opts:[],ok:0,tot:0};
+const memWeeks=()=>W.filter(w=>w.ch.length);
+const memPool=()=>W.filter(w=>w.w<=MEM.wk).flatMap(w=>w.ch);
+const memBox=n=>(S.mem[n]&&S.mem[n].b)||0;
+function memPick(){
+  const pool=memPool(),cand=pool.length>1?pool.filter(n=>n!==MEM.cur):pool;
+  let r=Math.random()*cand.reduce((s,n)=>s+MEM_W[memBox(n)],0);
+  const n=cand.find(n=>(r-=MEM_W[memBox(n)])<0)||cand[cand.length-1];
+  MEM.cur=n;MEM.shown=false;MEM.ans=null;
+  /* Scelte: prima gli accordi dello stesso tipo, poi gli altri, massimo quattro in tutto. */
+  const others=pool.filter(x=>x!==n).sort(()=>Math.random()-.5).sort((a,b)=>(CH[b].t===CH[n].t)-(CH[a].t===CH[n].t));
+  MEM.opts=[n,...others.slice(0,3)].sort(()=>Math.random()-.5);
+}
+function memGrade(ok){
+  const n=MEM.cur,m=S.mem[n]||{b:0,ok:0,no:0};
+  S.mem[n]={b:ok?Math.min(4,m.b+1):0,ok:m.ok+(ok?1:0),no:m.no+(ok?0:1)};
+  MEM.tot++;if(ok)MEM.ok++;
+  save();renderMemList();
+}
+const memFull=n=>`<b>${lbl(n)}</b>, ${CH[n].it}`;
+function renderMemCard(){
+  const n=MEM.cur,c=CH[n],el=$("#memCard");
+  const score=MEM.tot?`<p class="small muted">In questa sessione: ${MEM.ok} ${MEM.ok===1?"giusto":"giusti"} su ${MEM.tot}</p>`:"";
+  let h;
+  if(MEM.mode==="name"){
+    h=`<div class="memname">${lbl(n)}</div><p class="muted">${c.it}</p>`;
+    if(!MEM.shown)h+=`<p class="small muted">Fai l'accordo sulla chitarra senza guardare, poi controlla.</p><button class="btn pri go" data-act="memcheck" style="max-width:420px">Controlla</button>`;
+    else h+=`${chordSVG(n,chordDesc(n))}<p class="tip" style="max-width:420px">${c.tip}</p><button class="btn sm" data-act="hear" data-c="${n}">Ascolta</button><p>Ti era venuto giusto?</p><div class="memopts"><button class="btn" data-act="memgrade" data-ok="1">Sì, giusto</button><button class="btn" data-act="memgrade" data-ok="0">No, da rivedere</button></div>`;
+  }else{
+    const desc="Diagramma da riconoscere: "+c.f.map((f,i)=>`corda ${6-i} ${f<0?"muta":f===0?"libera":"tasto "+f}`).join(", ");
+    h=`${chordSVG(n,desc)}<p>Che accordo è?</p><div class="memopts">`+MEM.opts.map(o=>{
+      const cls=!MEM.ans?"":o===n?" ok":o===MEM.ans?" no":"";
+      return `<button class="btn${cls}" data-act="memopt" data-c="${o}"${MEM.ans?" disabled":""}>${lbl(o)}</button>`}).join("")+`</div>`;
+    if(MEM.ans)h+=(MEM.ans===n?`<p class="memres ok">Giusto: ${memFull(n)}</p>`:`<p class="memres no">Era ${memFull(n)}</p><p class="tip" style="max-width:420px">${c.tip}</p>`)
+      +`<div class="row" style="justify-content:center"><button class="btn sm" data-act="hear" data-c="${n}">Ascolta</button><button class="btn pri" data-act="memnext">Avanti</button></div>`;
+  }
+  el.innerHTML=`<div class="memq">${h}${score}</div>`;
+  applyNote(el);
+}
+function renderMemList(){
+  $("#memList").innerHTML=memPool().map(n=>{const b=memBox(n);
+    return `<div><span>${lbl(n)}</span><span class="pips" role="img" aria-label="Livello ${b} su 4">${[1,2,3,4].map(i=>`<i class="${i<=b?"on":""}"></i>`).join("")}</span></div>`}).join("");
+  applyNote($("#memList"));
+}
+function renderMem(){
+  const ws=memWeeks(),cw=currentWeek();
+  if(!MEM.wk)MEM.wk=[...ws].reverse().find(w=>w.w<=cw).w;
+  $("#memModes").innerHTML=[["name","Dal nome alla forma"],["shape","Dal disegno al nome"]].map(([k,l])=>`<button class="chip ${k===MEM.mode?"on":""}" data-act="memmode" data-k="${k}" aria-pressed="${k===MEM.mode}">${l}</button>`).join("");
+  $("#memWeek").innerHTML=ws.map(w=>{const k=W.filter(x=>x.w<=w.w).flatMap(x=>x.ch).length;
+    return `<option value="${w.w}">${w.w===1?"Settimana 1":"Settimane 1–"+w.w} · ${k} accordi</option>`}).join("");
+  $("#memWeek").value=MEM.wk;
+  if(!MEM.cur||!memPool().includes(MEM.cur))memPick();
+  renderMemCard();renderMemList();
+}
+
 /* ---------- Esercizi tab ---------- */
 const EX=[
  {t:`Spider 1-2-3-4`,m:3,d:`Mano sinistra: indice sul 1° tasto, medio sul 2°, anulare sul 3°, mignolo sul 4°, corda per corda dalla 6ª alla 1ª e ritorno. Piano, una nota alla volta, senza far ronzare le corde.`},
@@ -1082,9 +1173,14 @@ document.addEventListener("click",e=>{
   const a=t.dataset.act;
   if(a==="week"){S.open=S.open===+t.dataset.w?null:+t.dataset.w;save();renderPercorso()}
   else if(a==="day"){S.done[t.dataset.k]=!S.done[t.dataset.k];save();renderPercorso()}
-  else if(a==="nota"){S.nota=t.dataset.k;save();renderNota();renderPercorso();renderChords();renderEsercizi();renderMetro();renderSession()}
+  else if(a==="nota"){S.nota=t.dataset.k;save();renderNota();renderPercorso();renderChords();renderMem();renderEsercizi();renderMetro();renderSession()}
   else if(a==="filter"){filt=t.dataset.k;renderChords()}
   else if(a==="hear")strum(t.dataset.c);
+  else if(a==="memmode"){MEM.mode=t.dataset.k;memPick();renderMem()}
+  else if(a==="memcheck"){MEM.shown=true;renderMemCard()}
+  else if(a==="memgrade"){memGrade(t.dataset.ok==="1");memPick();renderMemCard()}
+  else if(a==="memopt"){MEM.ans=t.dataset.c;memGrade(MEM.ans===MEM.cur);renderMemCard()}
+  else if(a==="memnext"){memPick();renderMemCard()}
   else if(a==="tryrhythm")useRhythm(t.dataset.p,t.dataset.b);
   else if(a==="trysong")useSong(+t.dataset.w,t.dataset.alt);
   else if(a==="trypair"){setTab("esercizi");if(!one&&!onePending){$("#oneSel").value=t.dataset.p;oneUpdate()}}
@@ -1110,6 +1206,8 @@ document.addEventListener("change",e=>{
   else if(t.dataset.act==="splay"){M.play=t.checked;$("#optPlay").checked=M.play}
   else if(t.dataset.act==="scapo"){M.capo=+t.value;$("#capoSel").value=t.value}
 });
+$("#memWeek").addEventListener("change",e=>{MEM.wk=+e.target.value;memPick();renderMem()});
+$("#memReset").addEventListener("click",()=>{if(!confirm("Azzerare i livelli di tutti gli accordi?"))return;S.mem={};MEM.ok=MEM.tot=0;save();renderMem()});
 $("#oneSel").addEventListener("change",oneUpdate);
 $("#oneStart").addEventListener("click",oneStart);
 $("#oneSave").addEventListener("click",oneSave);
@@ -1134,8 +1232,8 @@ $("#tuneHold").addEventListener("change",stopTone);
 /* ---------- Avvio ---------- */
 if(!storageOk)$("#saveWarn").hidden=false;
 if(!S.open)S.open=currentWeek();
-renderNota();renderPercorso();renderChords();renderEsercizi();renderMetro();renderTuner();
-setTab(["percorso","accordi","esercizi","metronomo","accordatore"].includes(S.tab)?S.tab:"percorso");
+renderNota();renderPercorso();renderChords();renderMem();renderEsercizi();renderMetro();renderTuner();
+setTab(["percorso","accordi","memoria","esercizi","metronomo","accordatore"].includes(S.tab)?S.tab:"percorso");
 })();
 </script>
 <script>
